@@ -8,6 +8,11 @@
 
 推荐使用[秋水逸冰的脚本](https://shadowsocks.be/4.html)。
 
+### 运行ss-manger:
+
+具体请看 [秋水的部分](https://teddysun.com/532.html)
+
+
 ### 编辑 Mu API 配置
 
 复制 `config_example.yml` 为 `config.yml`，修改对应参数。
@@ -25,19 +30,13 @@ pip3 install -r requirements.txt
 
 ### 启动 ss-manager 与 Munager
 
-运行 `python3 run.py --config-file=config/config.yml` 运行脚本，在生产环境应该使用 PM2 进行守护，可以参考 `pm2 start config/pm2.yml` 文件。
+运行 `python3 run.py --config-file=config/config.yml` 运行脚本，
 
-一切部署成功后 `pm2 save` 保存配置，搭建 Node 环境可以参考下面的命令。
+### TODO
 
-```bash
-# install Node.js v8
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-apt-get install -y nodejs
-npm install -g pm2
-pm2 startup
-pm2 install pm2-logrotate
-```
+增加进程守护。
 
+跑的过程中会删掉 manager config文件的端口
 ## 已知 Bug
 
 暂未发现。
