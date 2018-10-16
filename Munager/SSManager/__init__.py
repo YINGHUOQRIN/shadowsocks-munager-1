@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import socket
+import time
 
 from redis import Redis
 
@@ -96,6 +97,7 @@ class SSManager:
         pipeline.hset(self._get_key(['user', str(port)]), 'plugin', plugin)
         pipeline.hset(self._get_key(['user', str(port)]), 'plugin_opts', plugin_opts)
         pipeline.execute()
+        time.sleep(5)
         return self.cli.recv(1506) == b'ok'
 
     def remove(self, port):
@@ -106,6 +108,7 @@ class SSManager:
         req = 'remove: {msg}'.format(msg=json.dumps(msg))
         req = req.encode('utf-8')
         self.cli.send(req)
+        time.sleep(5)
         return self.cli.recv(1506) == b'ok'
 
     def set_cursor(self, port, data):

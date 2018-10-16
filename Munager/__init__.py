@@ -88,6 +88,8 @@ class Munager:
                     if result:
                         self.ss_manager.set_cursor(port, throughput)
                         self.logger.info('update traffic: {} for port: {}.'.format(dif, port))
+                except:
+                    self.logger.info('update trafic faileds')
 
 
         # update online users count

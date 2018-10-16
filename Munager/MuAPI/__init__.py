@@ -22,14 +22,22 @@ class User:
         self.u = None
         self.d = None
         self.transfer_enable = None
+
+        self.plugin = None
+        self.plugin_opts = None
         self.__dict__.update(entries)
-        # from Mu api
-        # passwd: ss password
-        # method: ss method
+        if "simple_obfs_http" in self.obfs:
+            self.plugin = "obfs-server"
+            self.plugin_opts = "obfs=http"
+
+        elif "simple_obfs_tls" in self.obfs:
+            self.plugin = "obfs-server"
+            self.plugin_opts = "obfs=tls"
+        print(self.id,self.obfs,self.plugin,self.plugin_opts)
 
     @property
     def available(self):
-        return self.u + self.d < self.transfer_enable and self.enable == 1
+        return True if self.disconnect_ip == None else False
 
 
 class MuAPI:
@@ -76,7 +84,7 @@ class MuAPI:
 
     @gen.coroutine
     def get_users(self, key) -> dict:
-        request = self._get_request('/mu/users')
+        request = self._get_request('/mod_mu/users',{"node_id":self.node_id})
         response = yield self.client.fetch(request)
         content = response.body.decode('utf-8')
         cont_json = json.loads(content, encoding='utf-8')
