@@ -23,8 +23,8 @@ class User:
         self.d = None
         self.transfer_enable = None
 
-        self.plugin = "None"
-        self.plugin_opts = "None"
+        self.plugin = ""
+        self.plugin_opts = ""
         self.__dict__.update(entries)
         if "simple_obfs_http" in self.obfs:
             self.plugin = "obfs-server"
