@@ -2,8 +2,15 @@
 # TODO
 - [x] 基于ss-libev 适配sspanel v3 魔改版
 - [x] 增加测速和负载
-- [ ] 适配sspanel v3的v2ray后端( 不知道啥时候完成，首先感谢Jrohy的[multi-v2ray](https://github.com/Jrohy/multi-v2ray),预计将在他的基础上，
-来适配
+- [ ] 适配sspanel v3的v2ray后端( 不知道啥时候完成，首先感谢Jrohy的[multi-v2ray](https://github.com/Jrohy/multi-v2ray),预计将在他的基础上，来适配
+- [ ] 增加进程守护。
+- [ ] 跑的过程中会删掉 manager config文件的端口
+
+
+# 目前缺陷
+
+ss和目前panel下的v2ray部分未来预计都只能多用户一个配置，除了id或者密码，端口不一样，
+其余加密方式都是一样的。  ss这里是ss-manager通讯接口的问题，v2ray这里是panel部分现有的暂时没有这个配置返回(php 我还不会，主要是懒）
 # shadowsocks-munager
 
 我目前在使用的是来自于NimaQU的[SS-PANEL魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim),主要适配了他的Mod_MU API 的 shadowsocks-server，通过调用 ss-manager 控制 ss-server，支持流量统计，在线人数计算，
@@ -81,11 +88,7 @@ python3 run.py
 
 运行 `python3 run.py --config-file=config/config.yml` 运行脚本，
 
-### TODO
 
-增加进程守护。
-
-跑的过程中会删掉 manager config文件的端口
 ## 已知 Bug
 
 暂未发现。
