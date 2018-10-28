@@ -6,7 +6,7 @@ from tornado.ioloop import IOLoop, PeriodicCallback
 
 from Munager.MuAPI import MuAPI
 from Munager.SSManager import SSManager
-
+from Munager.SpeedTestManager import speedtest_thread
 
 class Munager:
     def __init__(self, config):
@@ -20,16 +20,35 @@ class Munager:
         self.mu_api = MuAPI(self.config)
         self.ss_manager = SSManager(self.config)
         self.logger.info('Munager initializing.')
+    @gen.coroutine
+    def upload_serverload(self):
+        # update online users count
+        try:
+            uptime = self._uptime()
+            load = self._load()
+            result = yield self.mu_api.upload_systemload(uptime,load)
+            if result:
+                self.logger.info('upload_system load success. uptime {}, load {}'.format(uptime,load))
+        except HTTPError:
+            self.logger.warning('upload_system load failed')
 
-        self.client = AsyncHTTPClient()
-
+    @gen.coroutine
+    def upload_speedtest(self):
+        # update online users count
+        try:
+            speedtest_result = speedtest_thread()
+            result = yield self.mu_api.upload_speedtest(speedtest_result)
+            if result:
+                self.logger.info('Successfully upload speet test result {}.'.format(speedtest_result))
+        except HTTPError:
+            self.logger.warning('failed to upload online user count.')
     @gen.coroutine
     def update_ss_manager(self):
         # get from MuAPI and ss-manager
         users = yield self.mu_api.get_users('port')
         state = self.ss_manager.state
         self.logger.info('get MuAPI and ss-manager succeed, now begin to check ports.')
-        self.logger.debug('get state from ss-manager: {}.'.format(state))
+        #self.logger.debug('get state from ss-manager: {}.'.format(state))
 
         # remove port
         for port in state:
@@ -105,6 +124,16 @@ class Munager:
         # s to ms
         return period * 1000
 
+    @staticmethod
+    def _uptime():
+        with open('/proc/uptime', 'r') as f:
+            return float(f.readline().split()[0])
+
+    @staticmethod
+    def _load():
+        import os
+        return os.popen(
+            "cat /proc/loadavg | awk '{ print $1\" \"$2\" \"$3 }'").readlines()[0]
     def run(self):
         # period task
         PeriodicCallback(
@@ -117,6 +146,16 @@ class Munager:
             callback_time=self._second_to_msecond(self.config.get('upload_throughput_period', 360)),
             io_loop=self.ioloop,
         ).start()
+        PeriodicCallback(
+            callback=self.upload_serverload,
+            callback_time=self._second_to_msecond(self.config.get("upload_serverload_period",60)),
+            io_loop = self.ioloop,
+        ).start()
+        PeriodicCallback(
+            callback_time=self._second_to_msecond(self.config.get("upload_speedtest_period",21600)),
+            callback=self.upload_speedtest,
+            io_loop=self.ioloop
+        ).start()
         try:
             # Init task
             self.ioloop.run_sync(self.update_ss_manager)
@@ -125,3 +164,6 @@ class Munager:
             del self.mu_api
             del self.ss_manager
             print('Bye~')
+
+
+

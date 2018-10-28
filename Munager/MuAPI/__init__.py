@@ -3,7 +3,7 @@ import logging
 from urllib.parse import urljoin, urlencode
 
 from tornado import gen
-from tornado.httpclient import AsyncHTTPClient, HTTPRequest
+from tornado.httpclient import AsyncHTTPClient, HTTPRequest,HTTPClient
 
 
 class MuAPIError(Exception):
@@ -33,7 +33,6 @@ class User:
         elif "simple_obfs_tls" in self.obfs:
             self.plugin = "obfs-server"
             self.plugin_opts = "obfs=tls"
-        print(self.id,self.obfs,self.plugin,self.plugin_opts)
 
     @property
     def available(self):
@@ -112,11 +111,42 @@ class MuAPI:
         request = self._get_request(
             path='/mu/users/{id}/traffic'.format(id=user_id),
             method='POST',
+            query={
+                'node_id': self.node_id},
             formdata={
                 'u': 0,
                 'd': traffic,
                 'node_id': self.node_id
             }
+        )
+        result = yield self._make_fetch(request)
+        return result
+
+    @gen.coroutine
+    def upload_speedtest(self,data):
+        request = self._get_request(
+            path='/mod_mu/func/speedtest',
+            query={
+                'node_id': self.node_id},
+            method='POST',
+            formdata={
+                "data":data
+            }
+        )
+        result = yield self._make_fetch(request)
+        return result
+
+    @gen.coroutine
+    def upload_systemload(self,uptime,load):
+
+        request = self._get_request(
+            '/mod_mu/nodes/{}/info'.format(self.node_id),
+            method='POST',
+            formdata={
+                'uptime': str(
+                    uptime),
+                'load': str(
+                    load)}
         )
         result = yield self._make_fetch(request)
         return result
