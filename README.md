@@ -1,6 +1,14 @@
+
+# TODO
+- [x] 基于ss-libev 适配sspanel v3 魔改版
+- [x] 增加测速和负载
+- [ ] 适配sspanel v3的v2ray后端( 不知道啥时候完成，首先感谢Jrohy的[multi-v2ray](https://github.com/Jrohy/multi-v2ray),预计将在他的基础上，
+来适配
 # shadowsocks-munager
 
-兼容 Mu API 的 shadowsocks-server，通过调用 ss-manager 控制 ss-server，支持流量统计等一系列功能。
+我目前在使用的是来自于NimaQU的[SS-PANEL魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim),主要适配了他的Mod_MU API 的 shadowsocks-server，通过调用 ss-manager 控制 ss-server，支持流量统计，在线人数计算，
+系统负载和测速(测速部分主要代码也是来自于NimaQU的后端的SpeedTest_thread.py)
+
 
 ## 部署
 
