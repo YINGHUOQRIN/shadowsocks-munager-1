@@ -49,7 +49,7 @@ class MuAPI:
         self.delay_sample = self.config.get('delay_sample')
         self.client = AsyncHTTPClient()
 
-    def _get_request(self, path, query=dict(), method='GET', formdata=None):
+    def _get_request(self, path, query=dict(), method='GET', formdata=None,headers ={'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',}):
         query.update(key=self.key)
         query_s = urlencode(query)
         url = urljoin(self.url_base, path) + '?' + query_s
@@ -61,9 +61,7 @@ class MuAPI:
         if method == 'POST' and formdata:
             req_para.update(
                 body=urlencode(formdata),
-                headers={
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-                }
+                headers=headers,
             )
         return HTTPRequest(**req_para)
 
@@ -131,7 +129,10 @@ class MuAPI:
             method='POST',
             formdata={
                 "data":data
-            }
+            },
+            headers={
+                    'Content-Type': 'application/json; charset=utf-8',
+                },
         )
         result = yield self._make_fetch(request)
         return result
