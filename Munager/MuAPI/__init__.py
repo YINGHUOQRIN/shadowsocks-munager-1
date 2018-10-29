@@ -59,16 +59,10 @@ class MuAPI:
             use_gzip=True,
         )
         if method == 'POST' and formdata:
-            if "json" in headers['Content-Type']:
-                req_para.update(
-                    body=json.dumps(formdata),
-                    headers=headers,
-                )
-            else:
-                req_para.update(
-                    body=urlencode(formdata),
-                    headers=headers,
-                )
+            req_para.update(
+                body=urlencode(formdata),
+                headers=headers,
+            )
         return HTTPRequest(**req_para)
 
     @gen.coroutine
