@@ -67,7 +67,7 @@ class MuAPI:
                 body=body,
                 headers=headers,
             )
-        return HTTPRequest(**req_para)
+        return HTTPRequest(connect_timeout=600, request_timeout=600,**req_para)
 
     @gen.coroutine
     def _make_fetch(self, _request):
