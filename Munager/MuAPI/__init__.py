@@ -59,8 +59,12 @@ class MuAPI:
             use_gzip=True,
         )
         if method == 'POST' and formdata:
+            if "json" in headers["Content-Type"]:
+                body = json.dumps(formdata)
+            else:
+                body =urlencode(formdata)
             req_para.update(
-                body=urlencode(formdata),
+                body=body,
                 headers=headers,
             )
         return HTTPRequest(**req_para)
@@ -71,6 +75,7 @@ class MuAPI:
             response = yield self.client.fetch(_request)
             content = response.body.decode('utf-8')
             cont_json = json.loads(content, encoding='utf-8')
+            self.logger.info("{}".format(cont_json))
             if cont_json.get('ret') != 1:
                 return False
             else:
