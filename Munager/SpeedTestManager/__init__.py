@@ -77,7 +77,7 @@ def speedtest_thread():
         round(
             (results_cm.upload / 1000 / 1000),
             2)) + " Mbit/s"
-    result = {'data': [{'telecomping': CTPing,
+    result =  [{'telecomping': CTPing,
                                         'telecomeupload': CTUpSpeed,
                                         'telecomedownload': CTDLSpeed,
                                         'unicomping': CUPing,
@@ -85,7 +85,7 @@ def speedtest_thread():
                                         'unicomdownload': CUDLSpeed,
                                         'cmccping': CMPing,
                                         'cmccupload': CMUpSpeed,
-                                        'cmccdownload': CMDLSpeed}]}
+                                        'cmccdownload': CMDLSpeed}]
 
     return result
 
