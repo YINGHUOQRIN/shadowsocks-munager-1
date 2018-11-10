@@ -160,5 +160,5 @@ class MuAPI:
     def get_node_info(self):
         url = self.url_base+"/mod_mu/nodes/{}/info".format(self.node_id)
         print(url)
-        r = requests.get(url, params={"key": "iMw48KF4roAh"})
+        r = requests.get(url, params={"key": self.key})
         return json.loads(r.text)['data']
