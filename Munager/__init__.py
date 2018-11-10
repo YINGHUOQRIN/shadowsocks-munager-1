@@ -6,6 +6,7 @@ from tornado.ioloop import IOLoop, PeriodicCallback
 
 from Munager.MuAPI import MuAPI
 from Munager.SSManager import SSManager
+from Munager.V2Manager import V2Manager
 from Munager.SpeedTestManager import speedtest_thread
 
 class Munager:
@@ -18,7 +19,12 @@ class Munager:
         # mix
         self.ioloop = IOLoop.current()
         self.mu_api = MuAPI(self.config)
-        self.ss_manager = SSManager(self.config)
+        self.node_info = self.mu_api.get_node_info()
+        self.logger.info("Node infos: {}".format(self.node_info))
+        if self.node_info['sort']==0:
+            self.ss_manager = SSManager(self.config)
+        elif self.node_info['sort']==11:
+            self.v2_manager = V2Manager(self.config)
         self.logger.info('Munager initializing.')
     @gen.coroutine
     def upload_serverload(self):
@@ -88,7 +94,7 @@ class Munager:
         self.logger.info('check ports finished.')
 
     @gen.coroutine
-    def upload_throughput(self):
+    def upload_ss_throughput(self):
         state = self.ss_manager.state
         online_amount = 0
         for port, info in state.items():
@@ -136,16 +142,17 @@ class Munager:
             "cat /proc/loadavg | awk '{ print $1\" \"$2\" \"$3 }'").readlines()[0]
     def run(self):
         # period task
-        PeriodicCallback(
-            callback=self.update_ss_manager,
-            callback_time=self._second_to_msecond(self.config.get('update_port_period', 60)),
-            io_loop=self.ioloop,
-        ).start()
-        PeriodicCallback(
-            callback=self.upload_throughput,
-            callback_time=self._second_to_msecond(self.config.get('upload_throughput_period', 360)),
-            io_loop=self.ioloop,
-        ).start()
+        if self.node_info['sort']==0:
+            PeriodicCallback(
+                callback=self.update_ss_manager,
+                callback_time=self._second_to_msecond(self.config.get('update_port_period', 60)),
+                io_loop=self.ioloop,
+            ).start()
+            PeriodicCallback(
+                callback=self.upload_ss_throughput,
+                callback_time=self._second_to_msecond(self.config.get('upload_throughput_period', 360)),
+                io_loop=self.ioloop,
+            ).start()
         PeriodicCallback(
             callback=self.upload_serverload,
             callback_time=self._second_to_msecond(self.config.get("upload_serverload_period",60)),
@@ -158,12 +165,73 @@ class Munager:
         ).start()
         try:
             # Init task
-            self.ioloop.run_sync(self.update_ss_manager)
+            self.ioloop.run_sync(self.upload_serverload)
             self.ioloop.start()
         except KeyboardInterrupt:
             del self.mu_api
-            del self.ss_manager
+            if self.node_info['sort']==0:
+                del self.ss_manager
+            elif self.node_info['sort']==11:
+                del self.v2_manager
             print('Bye~')
+
+class Munager_test:
+    def __init__(self, config):
+        self.config = config
+
+        # set logger
+        self.logger = logging.getLogger()
+
+        # mix
+        self.ioloop = IOLoop.current()
+        self.mu_api = MuAPI(self.config)
+        print(self.mu_api.get_node_info())
+        self.logger.info('Munager initializing.')
+
+    @gen.coroutine
+    def upload_serverload(self):
+        # update online users count
+        try:
+            uptime = self._uptime()
+            load = self._load()
+            result = yield self.mu_api.upload_systemload(uptime,load)
+            if result:
+                self.logger.info('upload_system load success. uptime {}, load {}'.format(uptime,load))
+        except HTTPError:
+            self.logger.warning('upload_system load failed')
+
+    @staticmethod
+    def _second_to_msecond(period):
+        # s to ms
+        return period * 1000
+
+    @staticmethod
+    def _uptime():
+        with open('/proc/uptime', 'r') as f:
+            return float(f.readline().split()[0])
+
+    @staticmethod
+    def _load():
+        import os
+        return os.popen(
+            "cat /proc/loadavg | awk '{ print $1\" \"$2\" \"$3 }'").readlines()[0]
+    def run(self):
+        # period task
+
+        PeriodicCallback(
+            callback=self.upload_serverload,
+            callback_time=self._second_to_msecond(self.config.get("upload_serverload_period",60)),
+            io_loop = self.ioloop,
+        ).start()
+
+        try:
+            # Init task
+            self.ioloop.run_sync(self.upload_serverload)
+            self.ioloop.start()
+        except KeyboardInterrupt:
+            del self.mu_api
+            print('Bye~')
+
 
 
 

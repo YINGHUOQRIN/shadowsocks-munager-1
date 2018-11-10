@@ -4,7 +4,7 @@ from urllib.parse import urljoin, urlencode
 
 from tornado import gen
 from tornado.httpclient import AsyncHTTPClient, HTTPRequest,HTTPClient
-
+import requests
 
 class MuAPIError(Exception):
     pass
@@ -156,3 +156,9 @@ class MuAPI:
         )
         result = yield self._make_fetch(request)
         return result
+
+    def get_node_info(self):
+        url = self.url_base+"/mod_mu/nodes/{}/info".format(self.node_id)
+        print(url)
+        r = requests.get(url, params={"key": "iMw48KF4roAh"})
+        return json.loads(r.text)['data']
