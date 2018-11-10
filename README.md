@@ -2,6 +2,7 @@
 # TODO
 - [x] 基于ss-libev 适配sspanel v3 魔改版
 - [x] 增加测速和负载
+- [ ] 全后端转向v2ray，使用v2ray提供ss和vmess代理，用v2ray自带api统计流量
 - [ ] 适配sspanel v3的v2ray后端( 不知道啥时候完成，首先感谢Jrohy的[multi-v2ray](https://github.com/Jrohy/multi-v2ray),预计将在他的基础上，来适配
 - [ ] 增加进程守护。
 - [ ] 跑的过程中会删掉 manager config文件的端口
