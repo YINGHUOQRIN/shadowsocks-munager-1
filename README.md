@@ -65,6 +65,7 @@ git clone -b v2ray https://github.com/rico93/shadowsocks-munager.git
 cd shadowsocks-munager
 pip3 install -r requirements.txt
 screen -S v2ray
+rm  /etc/v2ray/config.json
 python3 run.py
 ```
 
