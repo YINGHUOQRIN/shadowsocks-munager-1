@@ -3,6 +3,6 @@
   "method": "aes-256-cfb",
   "password": "test",
   "level": 0,
-  "ota": true,
+  "ota": false,
   "network": "tcp,udp"
 }

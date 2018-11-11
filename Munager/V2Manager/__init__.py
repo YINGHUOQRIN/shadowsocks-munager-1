@@ -8,10 +8,11 @@ from redis import Redis
 from Munager.Loader import Loader
 
 class V2Manager:
-    def __init__(self, config,sort):
+    def __init__(self, config,node_info):
         self.config = config
         self.logger = logging.getLogger()
-        self.sort = sort
+        self.sort = node_info['sort']
+        self.node_info = node_info
         self.redis = Redis(
             host=self.config.get('redis_host', 'localhost'),
             port=self.config.get('redis_port', 6379),
@@ -31,9 +32,11 @@ class V2Manager:
         return ret
 
     @staticmethod
-    def _fix_type(_d):
+    def _fix_type(_d,keys=['traffic_upload', 'traffic_download','user_id']):
         # convert type when get a unicode dict from redis
-        _d['cursor'] = int(_d.get('cursor', 0))
+        for key,value in _d.items():
+            if key in keys:
+                _d[key] = int(_d.get(key, 0))
         return _d
 
     def _get_key(self, _keys):
@@ -47,11 +50,9 @@ class V2Manager:
         return self.loader.get_users()
     def add(self, user):
         pipeline = self.redis.pipeline()
-        pipeline.hset(self._get_key(['user', user.prefixed_id]), 'cursor', 0)
-        pipeline.hset(self._get_key(['user', user.prefixed_id]), 'user_id', user.id)
-        pipeline.hset(self._get_key(['user', user.prefixed_id]), 'password', user.password)
-        pipeline.hset(self._get_key(['user', user.prefixed_id]), 'method', user.method)
-        pipeline.hset(self._get_key(['user',user.prefixed_id]),'uuid',user.uuid)
+        pipeline.hset(self._get_key(['user', user.email]), 'traffic_upload', 0)
+        pipeline.hset(self._get_key(['user', user.email]), 'traffic_download', 0)
+        pipeline.hset(self._get_key(['user', user.email]), "user_id",user.user_id)
         pipeline.execute()
         time.sleep(5)
         self.if_user_change = True
@@ -66,8 +67,20 @@ class V2Manager:
         else:
             return False
 
-    def set_cursor(self, user, data):
-        self.redis.hset(self._get_key(['user',user.email]), 'cursor', data)
+    def update_config(self):
+        self.loader.current_config.update_config(self.users,node_info=self.node_info)
+    def set_current_traffic(self, user, upload,download):
+        pipeline = self.redis.pipeline()
+        pipeline.hset(self._get_key(['user', user.email]), 'traffic_upload', upload)
+        pipeline.hset(self._get_key(['user', user.email]), 'traffic_download', download)
+        pipeline.execute()
+        time.sleep(5)
+    def get_last_traffic(self,user):
+        info = self.redis.hgetall(self._get_key(['user', user.email]))
+        info = self._to_unicode(info)
+        info = self._fix_type(info)
+        return info['traffic_upload'],info['traffic_download'],info['user_id']
     def __del__(self):
         pass
+
 

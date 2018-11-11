@@ -1,4 +1,6 @@
 
+alpha1.rico93.win;443;16;ws;;path=/v2ray|server_address=onedrive.rico93.win|port=10550
+
 # TODO
 - [x] 基于ss-libev 适配sspanel v3 魔改版
 - [x] 增加测速和负载
