@@ -1,0 +1,17 @@
+{
+  "port": 1080,
+  "listen": "127.0.0.1",
+  "protocol": null,
+  "settings": {
+  },
+  "sniffing": {
+    "enabled": true,
+    "destOverride": ["http", "tls"]
+  },
+  "streamSettings": {},
+  "allocate": {
+    "strategy": "always",
+    "refresh": 5,
+    "concurrency": 3
+  }
+}

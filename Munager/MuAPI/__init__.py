@@ -1,43 +1,13 @@
 import json
 import logging
 from urllib.parse import urljoin, urlencode
-
+from Munager.User import User,SS_user
 from tornado import gen
 from tornado.httpclient import AsyncHTTPClient, HTTPRequest,HTTPClient
 import requests
 
 class MuAPIError(Exception):
     pass
-
-
-class User:
-    def __init__(self, **entries):
-        # for IDE hint
-        self.id = None
-        self.user_name = None
-        self.passwd = None
-        self.port = None
-        self.method = None
-        self.enable = None
-        self.u = None
-        self.d = None
-        self.transfer_enable = None
-
-        self.plugin = ""
-        self.plugin_opts = ""
-        self.__dict__.update(entries)
-        if "simple_obfs_http" in self.obfs:
-            self.plugin = "obfs-server"
-            self.plugin_opts = "obfs=http"
-
-        elif "simple_obfs_tls" in self.obfs:
-            self.plugin = "obfs-server"
-            self.plugin_opts = "obfs=tls"
-
-    @property
-    def available(self):
-        return True if self.disconnect_ip == None else False
-
 
 class MuAPI:
     def __init__(self, config):
@@ -85,7 +55,15 @@ class MuAPI:
             return False
 
     @gen.coroutine
-    def get_users(self, key) -> dict:
+    def get_users(self,key,sort) -> dict:
+
+
+        if sort==0:
+            current_user = SS_user
+            prifix = "SS_"
+        else:
+            current_user = User
+            prifix = "Vemss_"
         request = self._get_request('/mod_mu/users',{"node_id":self.node_id})
         response = yield self.client.fetch(request)
         content = response.body.decode('utf-8')
@@ -94,7 +72,8 @@ class MuAPI:
             raise MuAPIError(cont_json)
         ret = dict()
         for user in cont_json.get('data'):
-            ret[user.get(key)] = User(**user)
+            user['prefixed_id'] = prifix+user.get(key)
+            ret[user['prefixed_id']] = current_user(**user)
         return ret
 
     @gen.coroutine

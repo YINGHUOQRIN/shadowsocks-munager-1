@@ -1,0 +1,8 @@
+{
+  "email": "rico93@outlook.com",
+  "method": "aes-256-cfb",
+  "password": "test",
+  "level": 0,
+  "ota": true,
+  "network": "tcp,udp"
+}
