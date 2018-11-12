@@ -73,7 +73,7 @@ class Vmess(InboundObject):
         if node_info:
             extraArgs = node_info['server'].get('extraArgs',{})
             self.streamSettings['wsSettings']['path'] = extraArgs.get("path","")
-            self.streamSettings['wsSettings']['headers']["Host"] = extraArgs.get("server_address","")
+            self.streamSettings['wsSettings']['headers']["Host"] = extraArgs.get("host","")
     def add(self,id=None,email=None):
         if id not in self.current_id:
             clientobject= self.load_ClientObject_Template()

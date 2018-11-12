@@ -14,8 +14,8 @@
 ## V2ray （ws）(面板节点信息有误，懒得改php了）
 
 目前懒得改面板，只能baypss
-没有cdn的域名或者ip;端口（外部链接的);AlterId;ws;;额外参数(path=/v2ray|server_address=xxxx.win|port=10550(这个端口内部监听))
-xxxxx.com;443;16;ws;;path=/v2ray|server_address=oxxxx.com|port=10550
+没有cdn的域名或者ip;端口（外部链接的);AlterId;ws;;额外参数(path=/v2ray|host=xxxx.win|port=10550(这个端口内部监听))
+xxxxx.com;443;16;ws;;path=/v2ray|host=oxxxx.com|port=10550
 
 默认自己会找caddy或者nginx反向代理. 只做了ws+tls（tls走反向代理），所以生成的
 config文件没有tls设置。
