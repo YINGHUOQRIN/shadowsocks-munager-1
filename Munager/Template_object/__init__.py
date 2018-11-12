@@ -52,7 +52,6 @@ class Vmess(InboundObject):
         super(Vmess,self).__init__()
         self.protocol = "vmess"
         self.alterId = alterId
-        self.load_Ws_StreamSettingsObject_Template()
         self.current_id = set()
 
 
@@ -66,7 +65,7 @@ class Vmess(InboundObject):
         with open("json_template/ClineObject.json",'r') as reader:
             data = json.load(reader)
         return data
-    def update(self,port=None):
+    def update_port(self,port=None):
         if port:
             self.port = port
     def set_ws_head_path(self,node_info={}):
@@ -88,9 +87,11 @@ class Vmess(InboundObject):
     @staticmethod
     def addUsers(users,node_info={}):
         extraArgs = node_info['server'].get('extraArgs', {})
-        vmess = Vmess()
-        vmess.update(extraArgs.get('port',10550))
-        vmess.set_ws_head_path(node_info)
+        vmess = Vmess(int(node_info['server'].get("AlterId","16")))
+        vmess.update_port(int(extraArgs.get('port',10550)))
+        if node_info['server'].get('protocol') == 'ws':
+            vmess.load_Ws_StreamSettingsObject_Template()
+            vmess.set_ws_head_path(node_info)
         for user in users:
             vmess.add(id=user.id,email=user.email)
         return [vmess.toJSON()]
@@ -125,7 +126,6 @@ class Config:
                 ss.append(users[key])
             if "Vmess_" in key:
                 vmess.append(users[key])
-        print(len(ss),len(vmess))
         self.inbounds = [self.load_stat_inbound()]
         if ss:
             inboundObjects =Shadowsocks.addUsers(ss)

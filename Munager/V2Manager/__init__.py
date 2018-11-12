@@ -66,7 +66,8 @@ class V2Manager:
             return True
         else:
             return False
-
+    def update_node_info(self,node_info):
+        self.node_info = node_info
     def update_config(self):
         self.loader.current_config.update_config(self.users,node_info=self.node_info)
     def set_current_traffic(self, user, upload,download):

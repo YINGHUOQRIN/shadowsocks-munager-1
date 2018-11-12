@@ -10,5 +10,3 @@ node_id: 6
 upload_throughput_period: 60
 update_port_period: 60
 
-vmess_port: 10550
-ss_network: 'tcp_and_udp'

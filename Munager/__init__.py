@@ -23,7 +23,7 @@ class Munager:
         self.node_info = self.mu_api.get_node_info()
         self.logger.info("Node infos: {}".format(self.node_info))
 
-        self.ss_manager = V2Manager(self.config, self.node_info)
+        self.manager = V2Manager(self.config, self.node_info)
         self.logger.info('Munager initializing.')
 
     @gen.coroutine
@@ -51,46 +51,54 @@ class Munager:
 
     @gen.coroutine
     def update_manager(self):
+        new_node_info = self.mu_api.get_node_info()
+        if self.node_info != new_node_info:
+            self.node_info = new_node_info
+            self.manager.if_user_change =False
+            self.manager.update_node_info(self.node_info)
         # get from MuAPI and ss-manager
         users = yield self.mu_api.get_users('email', self.node_info)
-        current_user = self.ss_manager.get_users()
+        current_user = self.manager.get_users()
         self.logger.info('get MuAPI and ss-manager succeed, now begin to check ports.')
         # self.logger.debug('get state from ss-manager: {}.'.format(state))
-        # remove user by email
+
+        # remove user by prefixed_id
         for prefixed_id in current_user:
             if prefixed_id not in users or not users.get(prefixed_id).available:
-                self.ss_manager.remove(prefixed_id)
+                self.manager.remove(prefixed_id)
                 self.logger.info('remove client: {}.'.format(prefixed_id))
+
         # add prefixed_id
         for prefixed_id, user in users.items():
             if user.available and prefixed_id not in current_user:
-                if self.ss_manager.add(user):
+                if self.manager.add(user):
                     self.logger.info('add user email {}.'.format(prefixed_id))
 
             if user.available and prefixed_id in current_user:
                 if user != current_user.get(prefixed_id):
-                    if self.ss_manager.remove(prefixed_id) and self.ss_manager.add(user):
+                    if self.manager.remove(prefixed_id) and self.manager.add(user):
                         self.logger.info('reset user {} due to method or password changed.'.format(prefixed_id))
+
         # check finish
         self.logger.info('check ports finished.')
-        self.logger.info("if update {}".format(self.ss_manager.if_user_change))
-        if self.ss_manager.if_user_change:
-            self.ss_manager.update_config()
-            self.ss_manager.loader.write()
-            self.ss_manager.if_user_change = False
-            self.ss_manager.loader.restart()
+        self.logger.info("if update {}".format(self.manager.if_user_change))
+        if self.manager.if_user_change:
+            self.manager.update_config()
+            self.manager.loader.write()
+            self.manager.if_user_change = False
+            self.manager.loader.restart()
 
     @gen.coroutine
     def upload_throughput(self):
-        current_user = self.ss_manager.get_users()
+        current_user = self.manager.get_users()
         online_amount = 0
         for prefixed, user in current_user.items():
-            laset_traffic_upload,laset_traffic_download,user_id= self.ss_manager.get_last_traffic(user)
+            laset_traffic_upload,laset_traffic_download,user_id= self.manager.get_last_traffic(user)
             current_upload,current_download = user.get_throughput()
             if current_download+current_upload < laset_traffic_upload+laset_traffic_download:
                 online_amount += 1
                 self.logger.warning('error throughput, try fix.')
-                self.ss_manager.set_current_traffic(user, upload=current_upload,download=current_download)
+                self.manager.set_current_traffic(user, upload=current_upload,download=current_download)
             elif current_download+current_upload > laset_traffic_upload+laset_traffic_download:
                 online_amount += 1
                 upload_dif = current_upload - laset_traffic_upload
@@ -98,7 +106,7 @@ class Munager:
                 try:
                     result = yield self.mu_api.upload_throughput(user_id, upload=upload_dif,donwload=download_dif)
                     if result:
-                        self.ss_manager.set_current_traffic(user=user,upload=current_upload,download=current_download)
+                        self.manager.set_current_traffic(user=user,upload=current_upload,download=current_download)
                         self.logger.info('update traffic: Upload {}, Download {} for user: {}.'.format(upload_dif,
                                                                                                        download_dif,
                                                                                                        user.prefixed_id))
@@ -157,8 +165,5 @@ class Munager:
             self.ioloop.start()
         except KeyboardInterrupt:
             del self.mu_api
-            if self.node_info['sort'] == 0:
-                del self.ss_manager
-            elif self.node_info['sort'] == 11:
-                del self.v2_manager
+            del self.manager
             print('Bye~')

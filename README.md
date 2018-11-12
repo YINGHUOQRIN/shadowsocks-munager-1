@@ -76,4 +76,7 @@ python3 run.py
 
 ## 已知 Bug
 
-暂未发现。
+sspanel,切换服务器类别(v2ray to ss or ss to v2ray) 会出现
+EOF occurred in violation of protocol (_ssl.c:833)， 看起来像是https验证失败，
+暂时不知道啥问题造成的。但是整体正常。
+
