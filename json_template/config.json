@@ -46,6 +46,15 @@
           ],
           "outboundTag": "api",
           "type": "field"
+        },
+        {
+          "type": "field",
+          "outboundTag": "blocked",
+          "domain": [
+            "regexp:(api|ps|sv|offnavi|newvector|ulog\\.imap|newloc)(\\.map|)\\.(baidu|n\\.shifen)\\.com",
+            "regexp:(.+\\.|^)(360|so)\\.(cn|com)",
+            "regexp:(.?)(xunlei|sandai|Thunder|XLLiveUD)(.)"
+          ]
         }
       ]
     },
@@ -70,7 +79,6 @@
   },
   "reverse": {},
   "inbounds": [
-
   ],
   "outbounds": [
     {

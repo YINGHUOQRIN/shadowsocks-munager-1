@@ -18,7 +18,7 @@ class InboundObject:
         pass
 
     @staticmethod
-    def addUsers(users,node_info={}):
+    def addUsers(users,node_info=None):
         pass
 class Shadowsocks(InboundObject):
     def __init__(self):
@@ -38,7 +38,7 @@ class Shadowsocks(InboundObject):
         if password:
             self.settings['password'] = password
     @staticmethod
-    def addUsers(users,node_info={}):
+    def addUsers(users,node_info=None):
         result =[]
         for user in users:
             ss = Shadowsocks()
@@ -54,28 +54,25 @@ class Vmess(InboundObject):
         self.alterId = alterId
         self.current_id = set()
 
-
     def set_alterId(self,alterId):
         self.alterId = alterId
-    def load_Ws_StreamSettingsObject_Template(self):
-        with open("json_template/ws.json",'r') as reader:
-            data = json.load(reader)
-        self.streamSettings = data
-    def load_ClientObject_Template(self):
-        with open("json_template/ClineObject.json",'r') as reader:
+
+    def load_Template(self,name):
+        with open("json_template/{}.json".format(name),'r') as reader:
             data = json.load(reader)
         return data
+
     def update_port(self,port=None):
         if port:
             self.port = port
-    def set_ws_head_path(self,node_info={}):
-        if node_info:
-            extraArgs = node_info['server'].get('extraArgs',{})
+
+    def set_ws_head_path(self,extraArgs=None):
+        if extraArgs:
             self.streamSettings['wsSettings']['path'] = extraArgs.get("path","")
             self.streamSettings['wsSettings']['headers']["Host"] = extraArgs.get("host","")
     def add(self,id=None,email=None):
         if id not in self.current_id:
-            clientobject= self.load_ClientObject_Template()
+            clientobject= self.load_Template("ClineObject")
             clientobject['id'] = id
             clientobject['alterId'] =self.alterId
             clientobject['email'] = email
@@ -85,13 +82,29 @@ class Vmess(InboundObject):
                 self.settings['clients'] = [clientobject]
             self.current_id.add(id)
     @staticmethod
-    def addUsers(users,node_info={}):
+    def addUsers(users,node_info=None):
+
         extraArgs = node_info['server'].get('extraArgs', {})
         vmess = Vmess(int(node_info['server'].get("AlterId","16")))
-        vmess.update_port(int(extraArgs.get('port',10550)))
-        if node_info['server'].get('protocol') == 'ws':
-            vmess.load_Ws_StreamSettingsObject_Template()
-            vmess.set_ws_head_path(node_info)
+        if node_info['server'].get('port', "443")=="443":
+            # 判断是否是443端口（默认这个给caddy或者nginx了),
+            vmess.update_port(int(extraArgs.get("port","10550")))
+            vmess.listen = "127.0.0.1"
+        else:
+            #如果不是443 默认不使用caddy，nginx的话，直接暴露端口给外部
+            vmess.update_port(int(node_info['server'].get('port', "443")))
+        if node_info['server'].get('protocol',"") == 'ws':
+            vmess.streamSettings = vmess.load_Template("ws")
+            vmess.set_ws_head_path(extraArgs)
+
+        if node_info['server'].get('protocol',"") == 'tcp':
+            vmess.streamSettings = vmess.load_Template("tcp")
+        if node_info['server'].get('protocol',"") == 'kcp':
+            vmess.streamSettings = vmess.load_Template("kcp")
+            if node_info['server']['protocol_param']:
+                vmess.streamSettings['kcpSettings']['header']['type'] = node_info['server']['protocol_param']
+            else:
+                vmess.streamSettings['kcpSettings']['header']['type'] = 'none'
         for user in users:
             vmess.add(id=user.id,email=user.email)
         return [vmess.toJSON()]
@@ -118,7 +131,7 @@ class Config:
         with open("json_template/stat_inbound.json") as reader:
             data = json.load(reader)
         return data
-    def update_config(self,users,node_info={}):
+    def update_config(self,users,node_info=None):
         ss = []
         vmess = []
         for key in users:

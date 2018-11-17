@@ -3,22 +3,38 @@
 
 加密方式只支持：
 
-- [] aes-256-cfb
-- [] aes-128-cfb
-- [] chacha20
-- [] chacha20-ietf
-- [] aes-256-gcm
-- [] aes-128-gcm
-- [] chacha20-poly1305 或称 chacha20-ietf-poly1305
+- [x] aes-256-cfb
+- [x] aes-128-cfb
+- [x] chacha20
+- [x] chacha20-ietf
+- [x] aes-256-gcm
+- [x] aes-128-gcm
+- [x] chacha20-poly1305 或称 chacha20-ietf-poly1305
 
-## V2ray （ws）目前端口监听在本地，请使用反向代理，暴露443端口 (面板节点信息有误，懒得改php了）
-
+## V2ray 支持kcp，ws，（tls请用nginx或者caddy提供)，tcp （tcp这部分我还没测试）
 目前懒得改面板，只能baypss
+
 没有cdn的域名或者ip;端口（外部链接的);AlterId;ws;;额外参数(path=/v2ray|host=xxxx.win|port=10550(这个端口内部监听))
 xxxxx.com;443;16;ws;;path=/v2ray|host=oxxxx.com|port=10550
 
+目前逻辑是如果为外部链接的端口是443，则默认监听本地127.0.0.1 使用额外参数的port，对外暴露443
+
+如果外部端口设定不是443，则直接使用该端口设定，所有用户的单端口。 额外参数的端口则弃用
+
 默认自己会找caddy或者nginx反向代理. 只做了ws+tls（tls走反向代理），所以生成的
 config文件没有tls设置。
+
+kcp支持所有v2ray的type：
+
+- none: 默认值，不进行伪装，发送的数据是没有特征的数据包。：xxxxx.com;443;16;kcp;;path=/v2ray|host=oxxxx.com|port=10550
+
+- srtp: 伪装成 SRTP 数据包，会被识别为视频通话数据（如 FaceTime）。：xxxxx.com;443;16;kcp;srtp;path=/v2ray|host=oxxxx.com|port=10550
+
+- utp: 伪装成 uTP 数据包，会被识别为 BT 下载数据。xxxxx.com;443;16;kcp;utp;path=/v2ray|host=oxxxx.com|port=10550
+
+- wechat-video: 伪装成微信视频通话的数据包。：xxxxx.com;443;16;kcp;wechat-video;path=/v2ray|host=oxxxx.com|port=10550
+- dtls: 伪装成 DTLS 1.2 数据包。：xxxxx.com;443;16;kcp;dtls;path=/v2ray|host=oxxxx.com|port=10550
+- wireguard: 伪装成 WireGuard 数据包。(并不是真正的 WireGuard 协议) ： xxxxx.com;443;16;kcp;wireguard;path=/v2ray|host=oxxxx.com|port=10550
 
 # TODO
 - [x] 增加测速和负载

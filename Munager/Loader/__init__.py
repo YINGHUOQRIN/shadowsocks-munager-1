@@ -26,8 +26,14 @@ class Loader:
 
             if i['protocol']=="vmess":
                 clients = i['settings']["clients"]
+                prefixid = "Vmess_"
+                networksetting = i['streamSettings']['network']
+                if networksetting == 'tcp':
+                    prefixid+="tcp_"
+                elif networksetting == "kcp":
+                    prefixid+="kcp_"+i['streamSettings']['kcpSettings']['header']['type']+"_"
                 for client in clients:
-                    users['Vmess_'+client['email']]= Vmess_user(**client)
+                    users[prefixid+client['email']]= Vmess_user(**client)
         return users
     def get_users(self):
         if os.path.exists(self.path):

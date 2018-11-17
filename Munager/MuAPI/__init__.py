@@ -64,6 +64,14 @@ class MuAPI:
         else:
             current_user = Vmess_user
             prifix = "Vmess_"
+            if node_info['server']['protocol']=="tcp":
+                prifix+='tcp_'
+            elif node_info['server']['protocol']=='kcp':
+                if node_info['server']['protocol_param']:
+                    prifix+='kcp_'+node_info['server']['protocol_param']+"_"
+                else:
+                    prifix += 'kcp_' + "none" + "_"
+
         request = self._get_request('/mod_mu/users',{"node_id":self.node_id})
         response = yield self.client.fetch(request)
         content = response.body.decode('utf-8')
