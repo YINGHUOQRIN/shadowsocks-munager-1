@@ -1,4 +1,11 @@
 # 重点 不适应大机场诉求，不适应大机场诉求，不适应大机场诉求
+
+# 别的v2适配的项目
+
+[ssrpanel](https://github.com/ssrpanel/SSRPanel),目前自带了一个v2ray的后端支持。
+
+[sspanel 魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim) wiki中有提及一个收费版的v2ray适配。
+
 # 划重点
 
 目前适配的是[sspanel 魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim)的webapi，
