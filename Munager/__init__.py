@@ -26,6 +26,8 @@ class Munager:
         self.manager = V2Manager(self.config, self.node_info)
         self.logger.info('Munager initializing.')
 
+        self.first_time_start = True
+
     @gen.coroutine
     def upload_serverload(self):
         # update online users count
@@ -54,7 +56,7 @@ class Munager:
         new_node_info = self.mu_api.get_node_info()
         if self.node_info != new_node_info:
             self.node_info = new_node_info
-            self.manager.if_user_change =False
+            self.manager.if_user_change = True
             self.manager.update_node_info(self.node_info)
         # get from MuAPI and ss-manager
         users = yield self.mu_api.get_users('email', self.node_info)
@@ -82,10 +84,11 @@ class Munager:
         # check finish
         self.logger.info('check ports finished.')
         self.logger.info("if update {}".format(self.manager.if_user_change))
-        if self.manager.if_user_change:
+        if self.manager.if_user_change or self.first_time_start:
             self.manager.update_config()
             self.manager.loader.write()
             self.manager.if_user_change = False
+            self.first_time_start = False
             self.manager.loader.restart()
 
     @gen.coroutine
