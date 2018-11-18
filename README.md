@@ -1,5 +1,26 @@
+# 重点 不适应大机场诉求，不适应大机场诉求，不适应大机场诉求
 # 划重点
+
+目前适配的是[sspanel 魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim)的webapi，
+
+然后目前只适配了流量记录，服务器是否在线，在线人数，负载，speedtest后端测速，延迟，后端按照前端设定自动修改配置文件，重启v2服务来达到的。所以不适应大机场，用户经常变动
+会造成大量的v2重启服务，造成断流。
+
+目前ss的适配是一个用户一个端口，v2的kcp，tcp，ws都是多用户共用一个端口。
+
+## 已知 Bug
+
+sspanel,切换服务器类别(v2ray to ss or ss to v2ray) 会出现
+EOF occurred in violation of protocol (_ssl.c:833)， 看起来像是https验证失败，
+暂时不知道啥问题造成的。但是整体正常。
+
+还有是一定偶然几率会出现，面板服务器下线(但能够正常使用），看log发现卡在测速，可以直接重启脚本就好了
+
+
+
 ## ss
+
+面板配置是节点类型shadowsocks, 普通端口
 
 加密方式只支持：
 
@@ -12,6 +33,8 @@
 - [x] chacha20-poly1305 或称 chacha20-ietf-poly1305
 
 ## V2ray 支持kcp，ws，（tls请用nginx或者caddy提供)，tcp （tcp这部分我还没测试）
+
+这里面板设置是节点类型v2ray, 普通端口
 目前懒得改面板，只能baypss
 
 没有cdn的域名或者ip;端口（外部链接的);AlterId;ws;;额外参数(path=/v2ray|host=xxxx.win|port=10550(这个端口内部监听))
@@ -89,10 +112,4 @@ python3 run.py --config-file=config/config.yml
 ~~~
 
 
-
-## 已知 Bug
-
-sspanel,切换服务器类别(v2ray to ss or ss to v2ray) 会出现
-EOF occurred in violation of protocol (_ssl.c:833)， 看起来像是https验证失败，
-暂时不知道啥问题造成的。但是整体正常。
 
