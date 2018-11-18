@@ -70,6 +70,7 @@ kcp支持所有v2ray的type：
 - [x] 增加测速和负载
 - [x] 全后端转向v2ray，使用v2ray提供ss和vmess代理，用v2ray自带api统计流量(Jrohy的[multi-v2ray](https://github.com/Jrohy/multi-v2ray)的templ和部分代码思路)
 - [ ] 增加进程守护。
+
 ### V2ray:
 
 ~~~
@@ -101,7 +102,7 @@ chmod +x tcp.sh && ./tcp.sh
 复制 `config_example.yml` 为 `config.yml`，修改对应参数。
 
 
-### 安装依赖
+### 安装依赖（Ubuntu,其他系统类似，需要安装python3，和redis)
 
 ```bash
 apt-get update -y
