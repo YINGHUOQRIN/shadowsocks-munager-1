@@ -97,9 +97,6 @@ chmod +x tcp.sh && ./tcp.sh
 ~~~
 
 
-### 编辑 Mu API 配置
-
-复制 `config_example.yml` 为 `config.yml`，修改对应参数。
 
 
 ### 安装依赖（Ubuntu,其他系统类似，需要安装python3，和redis)
@@ -111,6 +108,13 @@ git clone -b v2ray https://github.com/rico93/shadowsocks-munager.git
 cd shadowsocks-munager
 pip3 install -r requirements.txt
 ```
+
+### 编辑 Mu API 配置
+
+复制 `config_example.yml` 为 `config.yml`，修改对应参数。
+
+只需要修改Node_id, sspanel地址，和mukey
+
 
 ### 启动程序
 
