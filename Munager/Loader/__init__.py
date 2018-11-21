@@ -22,6 +22,7 @@ class Loader:
         for i in self.current_config.inbounds:
             if i['protocol']=="shadowsocks":
                 settings = i['settings']
+                settings['port'] = i['port']
                 users['SS_'+settings['email']]= SS_user(**settings)
 
             if i['protocol']=="vmess":
