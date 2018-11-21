@@ -23,6 +23,8 @@ EOF occurred in violation of protocol (_ssl.c:833)， 看起来像是https验证
 
 还有是一定偶然几率会出现，面板服务器下线(但能够正常使用），看log发现卡在测速，可以直接重启脚本就好了
 
+修改更新后，会有所有port都是1080的问题，删掉config重新生成就好，晚上回去修bug
+
 
 
 ## ss
