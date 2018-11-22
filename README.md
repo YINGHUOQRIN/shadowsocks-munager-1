@@ -40,7 +40,7 @@ EOF occurred in violation of protocol (_ssl.c:833)， 看起来像是https验证
 - [x] aes-128-gcm
 - [x] chacha20-poly1305 或称 chacha20-ietf-poly1305
 
-## V2ray 支持kcp，ws，（tls请用nginx或者caddy提供)，tcp （tcp这部分我还没测试）
+## V2ray 支持kcp，ws，（tls请用nginx或者caddy提供)，tcp 
 
 这里面板设置是节点类型v2ray, 普通端口
 目前懒得改面板，只能baypss
