@@ -88,7 +88,7 @@ class Vmess(InboundObject):
         vmess = Vmess(int(node_info['server'].get("AlterId","16")))
         if node_info['server'].get('port', "443")=="443":
             # 判断是否是443端口（默认这个给caddy或者nginx了),
-            vmess.update_port(int(extraArgs.get("port","10550")))
+            vmess.update_port(int(extraArgs.get("inside_port","10550")))
             vmess.listen = "127.0.0.1"
         else:
             #如果不是443 默认不使用caddy，nginx的话，直接暴露端口给外部
