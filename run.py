@@ -24,6 +24,7 @@ def bootstrap(config_file):
     logger.addHandler(handler)
     logger.setLevel(config.get('log_level', 'DEBUG'))
     logger.debug('load config from {}.'.format(config_file))
+    logger.info("use speedtest {}".format(config.get("speedtest",False)))
 
     # run
     app = Munager(config)
