@@ -73,13 +73,6 @@ kcp支持所有v2ray的type：
 - [x] 全后端转向v2ray，使用v2ray提供ss和vmess代理，用v2ray自带api统计流量(Jrohy的[multi-v2ray](https://github.com/Jrohy/multi-v2ray)的templ和部分代码思路)
 - [ ] 增加进程守护。
 
-### V2ray:
-
-~~~
-bash <(curl -L -s https://install.direct/go.sh)
-rm /etc/v2ray/config.json #这个是老版本的，得删掉程序才能跑，我指针对4.0后的格式做了适配
-~~~
-
 ### BBR :
 
 看 [Rat的](https://www.moerats.com/archives/387/)
@@ -99,31 +92,11 @@ chmod +x tcp.sh && ./tcp.sh
 ~~~
 
 
+### 安装Docker
 
+请根据官网来
 
-### 安装依赖（Ubuntu,其他系统类似，需要安装python3，和redis)
+### Pull the image
+$ docker pull rico93/v2ray_v3
 
-```bash
-apt-get update -y
-apt-get install -y gcc redis-server python3-dev python3-pip python3-setuptools
-git clone -b v2ray https://github.com/rico93/shadowsocks-munager.git
-cd shadowsocks-munager
-pip3 install -r requirements.txt
-```
-
-### 编辑 Mu API 配置
-
-复制 `config_example.yml` 为 `config.yml`，修改对应参数。
-
-只需要修改Node_id, sspanel地址，和mukey
-
-
-### 启动程序
-启动前请确保redis已经正常运行，都是默认端口。
-~~~
-screen -S v2ray
-python3 run.py --config-file=config/config.yml
-~~~
-
-
-
+$ docker run -d -network=host --name v2ray_v3 -e node_id=1 -e key=ixidnf -e sspanel_url=https://xx  --log-opt max-size=50m --log-opt max-file=3 --restart=always rico93/v2ray_v3
