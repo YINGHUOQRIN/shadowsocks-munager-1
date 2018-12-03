@@ -157,11 +157,12 @@ class Munager:
             callback_time=self._second_to_msecond(self.config.get("upload_serverload_period", 60)),
             io_loop=self.ioloop,
         ).start()
-        PeriodicCallback(
-            callback_time=self._second_to_msecond(self.config.get("upload_speedtest_period",21600)),
-            callback=self.upload_speedtest,
-            io_loop=self.ioloop
-        ).start()
+        if self.config.get("speedtest",False):
+            PeriodicCallback(
+                callback_time=self._second_to_msecond(self.config.get("upload_speedtest_period",21600)),
+                callback=self.upload_speedtest,
+                io_loop=self.ioloop
+            ).start()
         try:
             # Init task
             self.ioloop.run_sync(self.update_manager)
