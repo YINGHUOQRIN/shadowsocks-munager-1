@@ -53,9 +53,9 @@ class Loader:
     def restart(self):
         self.logger.info("Restart V2ray Service")
         service_name = ["v2ray", "nginx", "httpd", "apache2"]
-        start_cmd = "service {} start >/dev/null 2>&1"
-        stop_cmd = "service {} stop >/dev/null 2>&1"
-        status_cmd ="service {} status >/dev/null 2>&1"
+        start_cmd = "/etc/init.d/{} start >/dev/null 2>&1"
+        stop_cmd = "/etc/init.d/ {} stop >/dev/null 2>&1"
+        status_cmd ="/etc/init.d/{} status >/dev/null 2>&1"
         os.system(stop_cmd.format("v2ray"))
         os.system(start_cmd.format("v2ray"))
 
