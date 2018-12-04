@@ -23,7 +23,7 @@ class Loader:
             if i['protocol']=="shadowsocks":
                 settings = i['settings']
                 settings['port'] = i['port']
-                settings['prefixed_id'] = "SS_"
+                settings['prefixed_id'] = "SS_"+settings['email']
                 users['SS_'+settings['email']]= SS_user(**settings)
 
             if i['protocol']=="vmess":
@@ -35,7 +35,7 @@ class Loader:
                 elif networksetting == "kcp":
                     prefixid+="kcp_"+i['streamSettings']['kcpSettings']['header']['type']+"_"
                 for client in clients:
-                    client['prefixed_id'] = prefixid
+                    client['prefixed_id'] = prefixid+client['email']
                     users[prefixid+client['email']]= Vmess_user(**client)
         return users
     def get_users(self):
