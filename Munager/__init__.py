@@ -72,7 +72,6 @@ class Munager:
                 self.logger.info('need to remove client: {}.'.format(prefixed_id))
 
         # add prefixed_id
-        print(users.keys(),current_user.keys())
         for prefixed_id, user in users.items():
             if user.available and prefixed_id not in current_user:
                 if self.manager.add(user):
@@ -88,7 +87,6 @@ class Munager:
         self.logger.info("if update {}".format(self.manager.if_user_change))
         if self.manager.if_user_change:
             self.manager.if_user_change = False
-            print(self.manager.users_to_be_removed.keys(),self.manager.users_to_be_add.keys())
             self.manager.update_users()
             self.manager.current_node_info = self.manager.next_node_info
 
