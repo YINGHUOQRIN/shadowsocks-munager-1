@@ -1,0 +1,224 @@
+{
+    "api": {
+        "services": [
+            "HandlerService",
+            "LoggerService",
+            "StatsService"
+        ],
+        "tag": "api"
+    },
+    "inbounds": [
+        {
+            "listen": "0.0.0.0",
+            "port": 8080,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "address": "127.0.0.1"
+            },
+            "tag": "api"
+        },
+        {
+            "allocate": {
+                "concurrency": 3,
+                "refresh": 5,
+                "strategy": "always"
+            },
+            "alterId": 16,
+            "listen": "127.0.0.1",
+            "port": 10550,
+            "protocol": "vmess",
+            "settings": {
+                "clients": [
+                    {
+                        "alterId": 16,
+                        "email": "rico93@outlook.com",
+                        "id": "7de948da-6277-30a1-9a42-ef9947c49017",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "zcqbert1000@hotmail.com",
+                        "id": "56da2815-8dd9-3ad0-8489-ce34d823fada",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "390587115@qq.com",
+                        "id": "d3990e8a-d805-3e5b-a6d0-1177d39f8dae",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "17349756260@163.com",
+                        "id": "eefbffd0-8555-3263-9abc-8395956d408d",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "455809473@qq.com",
+                        "id": "52baea51-ec8f-36ca-9ddf-70e4d66dc605",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "jihengapp@163.com",
+                        "id": "23d129a0-dc1e-3cd6-9a13-b142788002d1",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "634533873@qq.com",
+                        "id": "42b1b413-97e9-34b7-b3bb-8bd893504246",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "807065216@qq.com",
+                        "id": "9d38f662-efe6-3e27-9ab8-00de82e26616",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "minjia_zhu@163.com",
+                        "id": "b5dd2dd3-7846-385c-aa68-9abe8c555ae5",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "znliunwpu@gmail.com",
+                        "id": "5e5018a0-2995-3dee-b7cf-25c393b5e802",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "tyw1987@hotmail.com",
+                        "id": "997128f9-6766-3329-985b-c77b0ab26c0f",
+                        "level": 0,
+                        "security": "auto"
+                    },
+                    {
+                        "alterId": 16,
+                        "email": "cliffyan@outlook.com",
+                        "id": "8dfa9fb0-acbb-3222-84aa-249d98c49a7d",
+                        "level": 0,
+                        "security": "auto"
+                    }
+                ]
+            },
+            "sniffing": {
+                "destOverride": [
+                    "http",
+                    "tls"
+                ],
+                "enabled": true
+            },
+            "streamSettings": {
+                "httpSettings": null,
+                "kcpSettings": null,
+                "network": "ws",
+                "security": "",
+                "tcpSettings": null,
+                "tlsSettings": {},
+                "wsSettings": {
+                    "connectionReuse": true,
+                    "headers": {
+                        "Host": "onedrive.rico93.win"
+                    },
+                    "path": "/v2ray"
+                }
+            }
+        }
+    ],
+    "log": {
+        "access": "/var/log/v2ray/access.log",
+        "error": "/var/log/v2ray/error.log",
+        "loglevel": "info"
+    },
+    "outbounds": [
+        {
+            "protocol": "freedom",
+            "settings": {}
+        },
+        {
+            "protocol": "blackhole",
+            "settings": {},
+            "tag": "blocked"
+        }
+    ],
+    "policy": {
+        "levels": {
+            "0": {
+                "bufferSize": 10240,
+                "connIdle": 300,
+                "downlinkOnly": 5,
+                "handshake": 4,
+                "statsUserDownlink": true,
+                "statsUserUplink": true,
+                "uplinkOnly": 2
+            }
+        },
+        "system": {
+            "statsInboundDownlink": false,
+            "statsInboundUplink": false
+        }
+    },
+    "reverse": {},
+    "routing": {
+        "settings": {
+            "rules": [
+                {
+                    "ip": [
+                        "0.0.0.0/8",
+                        "10.0.0.0/8",
+                        "100.64.0.0/10",
+                        "127.0.0.0/8",
+                        "169.254.0.0/16",
+                        "172.16.0.0/12",
+                        "192.0.0.0/24",
+                        "192.0.2.0/24",
+                        "192.168.0.0/16",
+                        "198.18.0.0/15",
+                        "198.51.100.0/24",
+                        "203.0.113.0/24",
+                        "::1/128",
+                        "fc00::/7",
+                        "fe80::/10"
+                    ],
+                    "outboundTag": "blocked",
+                    "protocol": [
+                        "bittorrent"
+                    ],
+                    "type": "field"
+                },
+                {
+                    "inboundTag": [
+                        "api"
+                    ],
+                    "outboundTag": "api",
+                    "type": "field"
+                },
+                {
+                    "domain": [
+                        "regexp:(api|ps|sv|offnavi|newvector|ulog\\.imap|newloc)(\\.map|)\\.(baidu|n\\.shifen)\\.com",
+                        "regexp:(.+\\.|^)(360|so)\\.(cn|com)",
+                        "regexp:(.?)(xunlei|sandai|Thunder|XLLiveUD)(.)"
+                    ],
+                    "outboundTag": "blocked",
+                    "type": "field"
+                }
+            ]
+        },
+        "strategy": "rules"
+    },
+    "stats": {}
+}
