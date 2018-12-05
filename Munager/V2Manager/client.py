@@ -158,8 +158,8 @@ class Websocket(StreamSetting):
 
 class Client(object):
     def __init__(self, address, port):
-        logging.info(f"Server API address {address}:{port}")
-        self._channel = grpc.insecure_channel(f"{address}:{port}")
+        logging.info("Server API address {}:{}".format(address,port))
+        self._channel = grpc.insecure_channel("{}:{}".format(address,port))
 
     def get_user_traffic_downlink(self, email, reset=False):
         """
@@ -171,7 +171,7 @@ class Client(object):
         stub = stats_command_pb2_grpc.StatsServiceStub(self._channel)
         try:
             return stub.GetStats(stats_command_pb2.GetStatsRequest(
-                name=f"user>>>{email}>>>traffic>>>downlink",
+                name="user>>>{}>>>traffic>>>downlink".format(email),
                 reset=reset
             )).stat.value
         except grpc.RpcError:
@@ -187,7 +187,7 @@ class Client(object):
         stub = stats_command_pb2_grpc.StatsServiceStub(self._channel)
         try:
             return stub.GetStats(stats_command_pb2.GetStatsRequest(
-                name=f"user>>>{email}>>>traffic>>>uplink",
+                name="user>>>{}>>>traffic>>>uplink".format(email),
                 reset=reset
             )).stat.value
         except grpc.RpcError:
@@ -217,9 +217,9 @@ class Client(object):
             return user_id
         except _Rendezvous as e:
             details = e.details()
-            if details.endswith(f"User {email} already exists."):
+            if details.endswith("User {} already exists.".format(email)):
                 raise EmailExistsError(details, email)
-            elif details.endswith(f"handler not found: {inbound_tag}"):
+            elif details.endswith("handler not found: {}".format(inbound_tag)):
                 raise InboundNotFoundError(details, inbound_tag)
             else:
                 raise V2RayError(details)
@@ -242,9 +242,9 @@ class Client(object):
             ))
         except _Rendezvous as e:
             details = e.details()
-            if details.endswith(f"User {email} not found."):
+            if details.endswith("User {} not found.".format(email)):
                 raise EmailNotFoundError(details, email)
-            elif details.endswith(f"handler not found: {inbound_tag}"):
+            elif details.endswith("handler not found: {}".format(inbound_tag)):
                 raise InboundNotFoundError(details, inbound_tag)
             else:
                 raise V2RayError(details)
