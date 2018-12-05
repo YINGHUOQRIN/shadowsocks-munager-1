@@ -46,7 +46,7 @@ EOF occurred in violation of protocol (_ssl.c:833)， 看起来像是https验证
 目前懒得改面板，只能baypss
 
 没有cdn的域名或者ip;端口（外部链接的);AlterId;ws;;额外参数(path=/v2ray|host=xxxx.win|inside_port=10550(这个端口内部监听))
-xxxxx.com;443;16;ws;;path=/v2ray|host=oxxxx.com|port=10550
+xxxxx.com;443;16;ws;;path=/v2ray|host=oxxxx.com|inside_port=10550
 
 目前逻辑是如果为外部链接的端口是443，则默认监听本地127.0.0.1:inside_port，对外暴露443 (如果想用kcp，走443端口，建议设置流量转发)
 
