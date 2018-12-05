@@ -1,14 +1,13 @@
 import logging
 
 from tornado import gen
-from tornado.httpclient import AsyncHTTPClient, HTTPError
+from tornado.httpclient import HTTPError
 from tornado.ioloop import IOLoop, PeriodicCallback
 
 from Munager.MuAPI import MuAPI
 from Munager.V2Manager import V2Manager
 from Munager.SpeedTestManager import speedtest_thread
 import json
-
 
 class Munager:
     def __init__(self, config):
@@ -20,11 +19,10 @@ class Munager:
         # mix
         self.ioloop = IOLoop.current()
         self.mu_api = MuAPI(self.config)
-        self.node_info = self.mu_api.get_node_info()
-        self.logger.info("Node infos: {}".format(self.node_info))
+        node_info = self.mu_api.get_node_info()
+        self.logger.info("Node infos: {}".format(node_info))
 
-        self.manager = V2Manager(self.config, self.node_info)
-        self.logger.info('Munager initializing.')
+        self.manager = V2Manager(self.config, next_node_info=node_info)
 
         self.first_time_start = True
 
@@ -54,12 +52,15 @@ class Munager:
     @gen.coroutine
     def update_manager(self):
         new_node_info = self.mu_api.get_node_info()
-        if self.node_info != new_node_info:
-            self.node_info = new_node_info
-            self.manager.if_user_change = True
-            self.manager.update_node_info(self.node_info)
+        self.logger.info("Old Node infos: {}".format(self.manager.next_node_info))
+        self.logger.info("New Node infos: {}".format(new_node_info))
+        if json.dumps(self.manager.next_node_info,sort_keys=True,indent=2) != json.dumps(new_node_info,sort_keys=True,indent=2)\
+                or self.first_time_start:
+            self.manager.next_node_info=new_node_info
+            self.manager.update_server()
+            self.first_time_start = False
         # get from MuAPI and ss-manager
-        users = yield self.mu_api.get_users('email', self.node_info)
+        users = yield self.mu_api.get_users('email', self.manager.next_node_info)
         current_user = self.manager.get_users()
         self.logger.info('get MuAPI and ss-manager succeed, now begin to check ports.')
         # self.logger.debug('get state from ss-manager: {}.'.format(state))
@@ -68,28 +69,28 @@ class Munager:
         for prefixed_id in current_user:
             if prefixed_id not in users or not users.get(prefixed_id).available:
                 self.manager.remove(prefixed_id)
-                self.logger.info('remove client: {}.'.format(prefixed_id))
+                self.logger.info('need to remove client: {}.'.format(prefixed_id))
 
         # add prefixed_id
+        print(users.keys(),current_user.keys())
         for prefixed_id, user in users.items():
             if user.available and prefixed_id not in current_user:
                 if self.manager.add(user):
-                    self.logger.info('add user email {}.'.format(prefixed_id))
+                    self.logger.info('need to add user email {}.'.format(prefixed_id))
 
             if user.available and prefixed_id in current_user:
                 if user != current_user.get(prefixed_id):
                     if self.manager.remove(prefixed_id) and self.manager.add(user):
-                        self.logger.info('reset user {} due to method or password changed.'.format(prefixed_id))
+                        self.logger.info('need to reset user {} due to method or password changed.'.format(prefixed_id))
 
         # check finish
         self.logger.info('check ports finished.')
         self.logger.info("if update {}".format(self.manager.if_user_change))
-        if self.manager.if_user_change or self.first_time_start:
-            self.manager.update_config()
-            self.manager.loader.write()
+        if self.manager.if_user_change:
             self.manager.if_user_change = False
-            self.first_time_start = False
-            self.manager.loader.restart()
+            print(self.manager.users_to_be_removed.keys(),self.manager.users_to_be_add.keys())
+            self.manager.update_users()
+            self.manager.current_node_info = self.manager.next_node_info
 
     @gen.coroutine
     def upload_throughput(self):
@@ -97,7 +98,17 @@ class Munager:
         online_amount = 0
         for prefixed, user in current_user.items():
             laset_traffic_upload,laset_traffic_download,user_id= self.manager.get_last_traffic(user)
-            current_upload,current_download = user.get_throughput()
+            current_upload,current_download = self.manager.client.get_user_traffic_uplink(user.email),\
+                                            self.manager.client.get_user_traffic_downlink(user.email)
+            if current_download is None:
+                current_download = 0
+            else:
+                current_download = int(current_download)
+            if current_upload is None:
+                current_upload = 0
+            else:
+                current_upload = int(current_upload)
+
             if current_download+current_upload < laset_traffic_upload+laset_traffic_download:
                 online_amount += 1
                 self.logger.warning('error throughput, try fix.')
@@ -145,23 +156,19 @@ class Munager:
         PeriodicCallback(
             callback=self.update_manager,
             callback_time=self._second_to_msecond(self.config.get('update_port_period', 60)),
-            io_loop=self.ioloop,
         ).start()
         PeriodicCallback(
             callback=self.upload_throughput,
             callback_time=self._second_to_msecond(self.config.get('upload_throughput_period', 360)),
-            io_loop=self.ioloop,
         ).start()
-        PeriodicCallback(
-            callback=self.upload_serverload,
-            callback_time=self._second_to_msecond(self.config.get("upload_serverload_period", 60)),
-            io_loop=self.ioloop,
-        ).start()
+        # PeriodicCallback(
+        #     callback=self.upload_serverload,
+        #     callback_time=self._second_to_msecond(self.config.get("upload_serverload_period", 60)),
+        # ).start()
         if self.config.get("speedtest",False):
             PeriodicCallback(
                 callback_time=self._second_to_msecond(self.config.get("upload_speedtest_period",21600)),
                 callback=self.upload_speedtest,
-                io_loop=self.ioloop
             ).start()
         try:
             # Init task

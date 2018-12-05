@@ -16,7 +16,6 @@ class MuAPI:
         self.url_base = self.config.get('sspanel_url')
         self.key = self.config.get('key')
         self.node_id = self.config.get('node_id')
-        self.delay_sample = self.config.get('delay_sample')
         self.client = AsyncHTTPClient()
         self.node_info = None
 
@@ -66,6 +65,11 @@ class MuAPI:
             prifix = "Vmess_"
             if node_info['server']['protocol']=="tcp":
                 prifix+='tcp_'
+            elif node_info['server']['protocol'] == 'ws':
+                if node_info['server']['protocol_param']:
+                    prifix+='ws_'+node_info['server']['protocol_param']+"_"
+                else:
+                    prifix += 'ws_' + "none" + "_"
             elif node_info['server']['protocol']=='kcp':
                 if node_info['server']['protocol_param']:
                     prifix+='kcp_'+node_info['server']['protocol_param']+"_"
@@ -84,8 +88,8 @@ class MuAPI:
             user["user_id"] = user['id']
             user['id'] = user['uuid']
             ret[user['prefixed_id']] = current_user(**user)
-            if prifix == 'Vmess':
-                ret[user['prefixed_id']].set_alterId(self.node_info['server']['AlterId'])
+            if 'Vmess' in prifix:
+                ret[user['prefixed_id']].set_alterId(int(self.node_info['server'].get('AlterId',16)))
         return ret
 
     @gen.coroutine
