@@ -22,7 +22,7 @@ class V2Manager:
         self.users_to_be_add = {}
         self.current_inbound_tags = set()
         self.users = {}
-        #self.restart()
+        self.restart()
 
     def get_users(self) -> dict:
 
