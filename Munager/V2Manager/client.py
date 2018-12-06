@@ -26,6 +26,7 @@ from v2ray.com.core.transport.internet.headers.wireguard import config_pb2 as he
 from v2ray.com.core.transport.internet.kcp import config_pb2 as kcp_config_pb2
 from v2ray.com.core.transport.internet.headers.tls import config_pb2 as header_tls_config_pb2
 from v2ray.com.core.transport.internet.headers.noop import config_pb2 as header_noop_config_pb2
+from v2ray.com.core.common.net.network_pb2 import TCP,UDP
 import uuid
 import grpc
 
@@ -112,7 +113,7 @@ class SSInbound(Proxy):
                     ))
                 ),
                 udp_enabled=1,
-                network=[internet_config_pb2.TCP, internet_config_pb2.UDP]
+                network=[TCP,UDP]
             )
         )
 
