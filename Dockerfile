@@ -18,7 +18,7 @@ COPY --from=builder /usr/bin/v2ray/v2ctl /usr/bin/v2ray/
 COPY --from=builder /usr/bin/v2ray/geoip.dat /usr/bin/v2ray/
 COPY --from=builder /usr/bin/v2ray/geosite.dat /usr/bin/v2ray/
 
-RUN runDeps="git"\
+RUN runDeps="git linux-headers make musl-dev python-dev"\
 	&& set -ex  \
     && apk --no-cache add ca-certificates  \
     && mkdir /var/log/v2ray/ \

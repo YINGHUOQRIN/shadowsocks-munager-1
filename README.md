@@ -94,7 +94,10 @@ chmod +x tcp.sh && ./tcp.sh
 
 ### 安装Docker
 
-请根据官网来
+~~~
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+~~~
 
 ### Pull the image
 $ docker pull rico93/v2ray_v3:api
