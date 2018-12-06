@@ -1,17 +1,12 @@
-# 重点 不适应大机场诉求，不适应大机场诉求，不适应大机场诉求
-
-# 别的v2适配的项目
-
-[ssrpanel](https://github.com/ssrpanel/SSRPanel),目前自带了一个v2ray的后端支持。
-
-[sspanel 魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim) wiki中有提及一个收费版的v2ray适配。
-
 # 划重点
+## 感谢
+[ThunderingII](https://github.com/ThunderingII/v2ray_python_client) 和 [spencer404](https://github.com/spencer404/v2ray_api) 关于python 调用api 的项目和示例。
+
+## 项目状态
 
 目前适配的是[sspanel 魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim)的webapi，
 
-然后目前只适配了流量记录，服务器是否在线，在线人数，负载，speedtest后端测速，延迟，后端按照前端设定自动修改配置文件，重启v2服务来达到的。所以不适应大机场，用户经常变动
-会造成大量的v2重启服务，造成断流。
+然后目前只适配了流量记录，服务器是否在线，在线人数，负载，speedtest后端测速，延迟，后端按照前端设定自动调用API增加用户。
 
 目前ss的适配是一个用户一个端口，v2的kcp，tcp，ws都是多用户共用一个端口。
 
@@ -21,10 +16,7 @@ sspanel,切换服务器类别(v2ray to ss or ss to v2ray) 会出现
 EOF occurred in violation of protocol (_ssl.c:833)， 看起来像是https验证失败，
 暂时不知道啥问题造成的。但是整体正常。
 
-还有是一定偶然几率会出现，面板服务器下线(但能够正常使用），看log发现卡在测速，可以直接重启脚本就好了
-
-
-
+还有是一定偶然几率会出现，面板服务器下线(但能够正常使用），看log发现卡在测速（目前默认不测速），可以直接重启脚本就好了
 
 ## ss
 
@@ -71,7 +63,8 @@ kcp支持所有v2ray的type：
 # TODO
 - [x] 增加测速和负载
 - [x] 全后端转向v2ray，使用v2ray提供ss和vmess代理，用v2ray自带api统计流量(Jrohy的[multi-v2ray](https://github.com/Jrohy/multi-v2ray)的templ和部分代码思路)
-- [ ] 增加进程守护。
+- [x] 使用docker
+
 
 ### BBR :
 
@@ -99,7 +92,7 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ~~~
 
-### Pull the image
+### Pull the image （目前ubuntu和alpine的镜像大小都是500m左右）
 ~~~
 docker pull rico93/v2ray_v3:api_ubuntu
 
@@ -108,3 +101,8 @@ or docker pull rico93/v2ray_v3:api_alpine
 docker run -d --network=host --name v2ray_v3_api -e node_id=1 -e key=ixidnf -e sspanel_url=https://xx -e docker=true --log-opt max-size=50m --log-opt max-file=3 --restart=always rico93/v2ray_v3:api_ubuntu
 ~~~
 
+# 别的v2适配的项目
+
+[ssrpanel](https://github.com/ssrpanel/SSRPanel),目前自带了一个v2ray的后端支持。
+
+[sspanel 魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim) wiki中有提及一个收费版的v2ray适配。
