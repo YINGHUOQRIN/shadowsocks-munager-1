@@ -41,7 +41,8 @@ CIPHER_TYPE_MAP = {"aes-256-cfb": shadowsocks_server_config_pb2.AES_256_CFB,
                    "aes-256-gcm": shadowsocks_server_config_pb2.AES_256_GCM,
                    "chacha20": shadowsocks_server_config_pb2.CHACHA20,
                    "chacah-ietf": shadowsocks_server_config_pb2.CHACHA20_IETF,
-                   'chacha20-ploy1305': shadowsocks_server_config_pb2.CHACHA20_POLY1305, }
+                   'chacha20-ploy1305': shadowsocks_server_config_pb2.CHACHA20_POLY1305,
+                   "chacha20-ietf-poly1305":shadowsocks_server_config_pb2.CHACHA20_POLY1305,}
 
 AUTO = 0
 DISABLE = 1

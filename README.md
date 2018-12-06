@@ -97,6 +97,6 @@ chmod +x tcp.sh && ./tcp.sh
 请根据官网来
 
 ### Pull the image
-$ docker pull rico93/v2ray_v3
+$ docker pull rico93/v2ray_v3:api
 
-$ docker run -d -network=host --name v2ray_v3 -e node_id=1 -e key=ixidnf -e sspanel_url=https://xx  --log-opt max-size=50m --log-opt max-file=3 --restart=always rico93/v2ray_v3
+$ docker run -d -network=host --name v2ray_v3_api -e node_id=1 -e key=ixidnf -e sspanel_url=https://xx -e docker=false --log-opt max-size=50m --log-opt max-file=3 --restart=always rico93/v2ray_v3:api
