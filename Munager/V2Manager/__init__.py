@@ -1,19 +1,17 @@
-import logging
 import time
 from Munager.V2Manager.client import *
 from errors import *
 import uuid
-import pickle
-import  os
+import os
+
+
 class V2Manager:
-    def __init__(self, config, current_node_info=None,next_node_info=None):
+    def __init__(self, config, current_node_info=None, next_node_info=None):
         self.config = config
         self.logger = logging.getLogger()
-
-        self.client = Client("127.0.0.1","2333")
-
+        self.client = Client("127.0.0.1", "2333")
         self.current_node_info = current_node_info
-        self.next_node_info =next_node_info
+        self.next_node_info = next_node_info
         self.if_user_change = False
         self.logger.info('Manager initializing.')
         self.current_traffic = {}
@@ -22,7 +20,8 @@ class V2Manager:
         self.users_to_be_add = {}
         self.current_inbound_tags = set()
         self.users = {}
-        self.restart()
+        if not self.config.docker:
+            self.restart()
 
     def get_users(self) -> dict:
 
@@ -30,13 +29,14 @@ class V2Manager:
 
     def add(self, user):
         self.if_user_change = True
-        self.users_to_be_add[user.prefixed_id]=user
+        self.users_to_be_add[user.prefixed_id] = user
         return True
+
     def remove(self, prefixed_id):
         if prefixed_id in self.users:
             user = self.users[prefixed_id]
             self.if_user_change = True
-            self.users_to_be_removed[user.prefixed_id]=user
+            self.users_to_be_removed[user.prefixed_id] = user
             return True
         else:
             return False
@@ -45,7 +45,7 @@ class V2Manager:
         successfully_removed = []
         successfully_add = []
         if self.current_node_info:
-            if self.current_node_info['sort'] ==0 :
+            if self.current_node_info['sort'] == 0:
                 # SS server
                 # remove users
                 for prefixed_id in self.users_to_be_removed:
@@ -53,7 +53,8 @@ class V2Manager:
                         self.client.remove_inbound(prefixed_id)
                         logging.info("Successfully remove user {}".format(prefixed_id))
                     except InboundNotFoundError:
-                        logging.info("not enough information for making a decision or {} has been removed".format(prefixed_id))
+                        logging.info(
+                            "not enough information for making a decision or {} has been removed".format(prefixed_id))
                         successfully_removed.append(prefixed_id)
                     except V2RayError as e:
                         logging.warning(e.details)
@@ -65,8 +66,8 @@ class V2Manager:
                 ## Remove users
                 for prefixed_id in self.users_to_be_removed:
                     user = self.users_to_be_removed[prefixed_id]
-                    try :
-                        self.client.remove_user(inbound_tag=self.INBOUND_TAG,email=user.email)
+                    try:
+                        self.client.remove_user(inbound_tag=self.INBOUND_TAG, email=user.email)
                         logging.info("Successfully remove user {}".format(user.prefixed_id))
                     except EmailNotFoundError:
                         logging.info("NOt find the user {}".format(user.prefixed_id))
@@ -81,7 +82,7 @@ class V2Manager:
 
         time.sleep(5)
         if self.next_node_info:
-            if self.next_node_info['sort'] ==0:
+            if self.next_node_info['sort'] == 0:
                 # add users
                 for prefixed_id in self.users_to_be_add:
                     user = self.users_to_be_add[prefixed_id]
@@ -90,14 +91,14 @@ class V2Manager:
                         self.client.add_inbound(tag=user.prefixed_id, address="0.0.0.0", port=int(user.port),
                                                 proxy=proxy)
                     except AddressAlreadyInUseError:
-                        logging.info("Port already in use, user {}, port {}".format(user.prefixed_id,user.port))
+                        logging.info("Port already in use, user {}, port {}".format(user.prefixed_id, user.port))
                         successfully_add.append(prefixed_id)
                     except V2RayError as e:
                         logging.warning(e.details)
                     else:
                         logging.info("Successfully add user {}".format(user.prefixed_id))
                         successfully_add.append(prefixed_id)
-            elif self.next_node_info['sort'] ==11:
+            elif self.next_node_info['sort'] == 11:
                 # Add users
                 for prefixed_id in self.users_to_be_add:
                     user = self.users_to_be_add[prefixed_id]
@@ -116,29 +117,29 @@ class V2Manager:
                         successfully_add.append(prefixed_id)
                         logging.info("Successfully add user {}".format(user.prefixed_id))
 
-
         for prefixed_id in successfully_removed:
             self.users.pop(prefixed_id)
             self.users_to_be_removed.pop(prefixed_id)
         for prefixed_id in successfully_add:
-            self.users[prefixed_id]=self.users_to_be_add.pop(prefixed_id)
+            self.users[prefixed_id] = self.users_to_be_add.pop(prefixed_id)
 
     def update_server(self):
         self.remove_inbounds()
         self.add_main_inbound()
-    def update_main_address_and_prot(self,node_info):
-        if node_info['sort']==11:
-            if node_info['server'].get('port','443') =='443':
+
+    def update_main_address_and_prot(self, node_info):
+        if node_info['sort'] == 11:
+            if node_info['server'].get('port', '443') == '443':
                 self.main_listen_address = '127.0.0.1'
-                self.main_listen_port = int(node_info['server']['extraArgs'].get('inside_port',"10550"))
+                self.main_listen_port = int(node_info['server']['extraArgs'].get('inside_port', "10550"))
             else:
                 self.main_listen_address = '0.0.0.0'
-                self.main_listen_port = int(node_info['server'].get('port','443'))
+                self.main_listen_port = int(node_info['server'].get('port', '443'))
 
     def add_main_inbound(self):
-        #only for VMESS
+        # only for VMESS
         if self.next_node_info:
-            if self.next_node_info['sort'] ==11:
+            if self.next_node_info['sort'] == 11:
                 self.update_main_address_and_prot(self.next_node_info)
                 vmess = VMessInbound(
                     [{
@@ -149,30 +150,33 @@ class V2Manager:
                     }
                     ]
                 )
-                if self.next_node_info['server'].get("protocol","tcp")=="tcp":
-                    steamsetting = StreamSetting()
-                elif self.next_node_info['server'].get("protocol","tcp")=="ws":
+                steamsetting = StreamSetting()
+                if self.next_node_info['server'].get("protocol", "tcp") == "ws":
                     host = None
                     path = None
-                    extraArgs = self.next_node_info['server'].get("extraArgs",{})
+                    extraArgs = self.next_node_info['server'].get("extraArgs", {})
                     if extraArgs:
-                        path = extraArgs.get('path','/')
-                        host = extraArgs.get('inside_port',"google.com")
+                        path = extraArgs.get('path', '/')
+                        host = extraArgs.get('inside_port', "google.com")
                     if path and host:
-                        steamsetting = Websocket(path=path,host=host)
+                        steamsetting = Websocket(path=path, host=host)
                     else:
                         steamsetting = Websocket()
                 elif self.next_node_info['server'].get("protocol", "tcp") == "kcp":
-                    steamsetting = Kcp()
+                    header_key = self.next_node_info['server'].get("protocol_param", 'noop')
+                    steamsetting = Kcp(header_key=header_key)
                 try:
-                    self.client.add_inbound(tag=self.INBOUND_TAG, address=self.main_listen_address, port=self.main_listen_port,
-                                            proxy = vmess,streamsetting=steamsetting.streamconfig)
+                    self.client.add_inbound(tag=self.INBOUND_TAG, address=self.main_listen_address,
+                                            port=self.main_listen_port,
+                                            proxy=vmess, streamsetting=steamsetting.streamconfig)
                 except AddressAlreadyInUseError:
                     logging.info("Port already in use, {}".format(self.INBOUND_TAG, self.main_listen_port))
                 except V2RayError as e:
                     logging.warning(e.details)
                 else:
-                    logging.info("Successfully add MAIN INBOUND {} port {}".format(self.INBOUND_TAG,self.main_listen_port))
+                    logging.info(
+                        "Successfully add MAIN INBOUND {} port {}".format(self.INBOUND_TAG, self.main_listen_port))
+
     def remove_inbounds(self):
         if self.current_node_info:
             if self.current_node_info['sort'] == 11:
@@ -197,12 +201,12 @@ class V2Manager:
         if user.email in self.current_traffic:
             return self.current_traffic[user.email][0], self.current_traffic[user.email][1], user.user_id
         else:
-            return  0,0,user.user_id
+            return 0, 0, user.user_id
 
     def restart(self):
         self.logger.info("Restart V2ray Service")
         service_name = ["v2ray", "nginx", "httpd", "apache2"]
-        if not self.config.get("docker",False):
+        if not self.config.get("docker", False):
             start_cmd = "service {} start >/dev/null 2>&1"
             stop_cmd = "service {} stop >/dev/null 2>&1"
             status_cmd = "service {} status >/dev/null 2>&1"
@@ -218,5 +222,3 @@ class V2Manager:
             self.logger.info("v2ray running !!!")
         else:
             self.logger.warning("There is something wrong, v2ray didn't run service")
-
-

@@ -19,29 +19,35 @@ from v2ray.com.core.app.stats.command import command_pb2_grpc as stats_command_p
 from v2ray.com.core.proxy.shadowsocks import config_pb2 as shadowsocks_server_config_pb2
 import v2ray.com.core.transport.internet.config_pb2 as internet_config_pb2
 from v2ray.com.core.transport.internet.websocket import config_pb2 as websocket_config_pb2
+from v2ray.com.core.transport.internet.headers.wechat import config_pb2 as header_wechat_config_pb2
+from v2ray.com.core.transport.internet.headers.srtp import config_pb2 as header_srtp_config_pb2
+from v2ray.com.core.transport.internet.headers.utp import config_pb2 as header_utp_config_pb2
+from v2ray.com.core.transport.internet.headers.wireguard import config_pb2 as header_wiregurad_config_pb2
+from v2ray.com.core.transport.internet.kcp import config_pb2 as kcp_config_pb2
+from v2ray.com.core.transport.internet.headers.tls import config_pb2 as header_tls_config_pb2
+from v2ray.com.core.transport.internet.headers.noop import config_pb2 as header_noop_config_pb2
 import uuid
 import grpc
 
-UNKNOWN = 0
-AES_128_CFB = 1
-AES_256_CFB = 2
-CHACHA20 = 3
-CHACHA20_IETF = 4
-AES_128_GCM = 5
-AES_256_GCM = 6
-CHACHA20_POLY1305 = 7
-NONE = 8
-Auto = 0
-Disabled = 1
-Enabled = 2
+KCP_HEADERS_CONFIG = {"wechat-video": header_wechat_config_pb2.VideoConfig(), "srtp": header_srtp_config_pb2.Config(),
+                      'utp': header_utp_config_pb2.Config(),
+                      'wireguard': header_wiregurad_config_pb2.WireguardConfig(),
+                      'dtls': header_tls_config_pb2.PacketConfig(),
+                      "noop": header_noop_config_pb2.Config()}
 
-RawTCP = 1
-TCP = 2
-UDP = 3
+CIPHER_TYPE_MAP = {"aes-256-cfb": shadowsocks_server_config_pb2.AES_256_CFB,
+                   "aes-128-cfb": shadowsocks_server_config_pb2.AES_128_CFB,
+                   "aes-128-gcm": shadowsocks_server_config_pb2.AES_128_GCM,
+                   "aes-256-gcm": shadowsocks_server_config_pb2.AES_256_GCM,
+                   "chacha20": shadowsocks_server_config_pb2.CHACHA20,
+                   "chacah-ietf": shadowsocks_server_config_pb2.CHACHA20_IETF,
+                   'chacha20-ploy1305': shadowsocks_server_config_pb2.CHACHA20_POLY1305, }
 
-CIPHER_TYPE_MAP = {"aes-256-cfb": AES_256_CFB, "aes-128-cfb": AES_128_CFB, "aes-128-gcm": AES_128_GCM,
-                   "aes-256-gcm": AES_256_GCM, "chacha20": CHACHA20, "chacah-ietf": CHACHA20_IETF,
-                   'chacha20-ploy1305': CHACHA20_POLY1305, }
+AUTO = 0
+DISABLE = 1
+ENABLE = 2
+
+
 
 
 def to_typed_message(message):
@@ -101,14 +107,14 @@ class SSInbound(Proxy):
                     account=to_typed_message(shadowsocks_server_config_pb2.Account(
                         password=u.password,
                         cipher_type=CIPHER_TYPE_MAP[u.method],
-                        ota=Auto,
+                        ota=AUTO,
                     ))
                 ),
-
                 udp_enabled=1,
-                network=[TCP, UDP]
+                network=[internet_config_pb2.TCP, internet_config_pb2.UDP]
             )
         )
+
 
 class StreamSetting(object):
     "Stream Setting"
@@ -119,20 +125,35 @@ class StreamSetting(object):
 
 class Kcp(StreamSetting):
 
-    def __init__(self, readbuffer_size=4096, writebuffer=4096, uplinkcapacity=20, downlinkcapacity=20):
+    def __init__(self, header_key="noop", readbuffer_size=4096, writebuffer=4096, uplinkcapacity=20, downlinkcapacity=20):
         """
         :param users: 包含'email','level','user_id','alter_id'字段的字典
         """
+        if header_key in KCP_HEADERS_CONFIG:
+            header = KCP_HEADERS_CONFIG[header_key]
         super(Kcp, self).__init__()
         self.streamconfig = internet_config_pb2.StreamConfig(
-            protocol=internet_config_pb2.MKCP)
+            protocol=internet_config_pb2.MKCP,
+            transport_settings=[
+                internet_config_pb2.TransportConfig(
+                    protocol=internet_config_pb2.MKCP,
+                    settings=to_typed_message(
+                        kcp_config_pb2.Config(
+                            header_config=to_typed_message(
+                                header
+                            )
+                        )
 
+                    )
+                )
 
+            ]
 
+        )
 
 
 class Websocket(StreamSetting):
-    def __init__(self, path="/",host="google.com"):
+    def __init__(self, path="/", host="google.com"):
         super(Websocket, self).__init__()
         self.streamconfig = internet_config_pb2.StreamConfig(
             protocol=internet_config_pb2.WebSocket,
@@ -158,8 +179,8 @@ class Websocket(StreamSetting):
 
 class Client(object):
     def __init__(self, address, port):
-        logging.info("Server API address {}:{}".format(address,port))
-        self._channel = grpc.insecure_channel("{}:{}".format(address,port))
+        logging.info("Server API address {}:{}".format(address, port))
+        self._channel = grpc.insecure_channel("{}:{}".format(address, port))
 
     def get_user_traffic_downlink(self, email, reset=False):
         """
@@ -249,7 +270,7 @@ class Client(object):
             else:
                 raise V2RayError(details)
 
-    def add_inbound(self, tag, address, port, proxy: Proxy,streamsetting: StreamSetting =None):
+    def add_inbound(self, tag, address, port, proxy: Proxy, streamsetting: StreamSetting = None):
         """
         增加传入连接
         :param tag: 此传入连接的标识
