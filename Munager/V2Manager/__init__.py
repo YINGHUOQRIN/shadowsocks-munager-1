@@ -20,7 +20,7 @@ class V2Manager:
         self.users_to_be_add = {}
         self.current_inbound_tags = set()
         self.users = {}
-        if not self.config.docker:
+        if not self.config.get("docker",False):
             self.restart()
 
     def get_users(self) -> dict:
