@@ -1,0 +1,16 @@
+www.xxx.com
+{
+  log ./caddy.log
+  proxy /v2ray 127.0.0.1:10550 {
+    websocket
+    header_upstream -Origin
+  }
+  proxy / https://www.bing.com {
+        transparent
+    }
+  gzip
+  tls xxxxx@outlook.com {
+    protocols tls1.0 tls1.2
+    dns cloudflare
+  }
+}
