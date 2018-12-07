@@ -92,7 +92,7 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ~~~
 
-### Pull the image （目前ubuntu和alpine的镜像大小都是500m左右）
+### Pull the image （目前ubuntu（500M）和alpine（200M））
 ~~~
 docker pull rico93/v2ray_v3:api_alpine
 
