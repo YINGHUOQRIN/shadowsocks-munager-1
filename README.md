@@ -143,7 +143,7 @@ services:
         max-file: "3"
 
  caddy:
-    image: jessestuart/caddy-cloudflare:v0.11.0
+    image: rico93/v2ray_v3:caddy
     restart: always
     environment:
       - ACME_AGREE=true
