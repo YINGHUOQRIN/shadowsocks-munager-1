@@ -1,4 +1,5 @@
 # 划重点
+## 目前支持 Docker-compose直接安装，推荐使用版本一
 ## 感谢
 [ThunderingII](https://github.com/ThunderingII/v2ray_python_client) 和 [spencer404](https://github.com/spencer404/v2ray_api) 关于python 调用api 的项目和示例。
 
@@ -90,6 +91,108 @@ chmod +x tcp.sh && ./tcp.sh
 ~~~
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
+~~~
+
+### 推荐docker-compose 安装：
+
+安装 docker-compose
+~~~
+pip install -U docker-compose
+~~~
+
+#### 版本一 Caddy提供tls(ws)
+
+创建 Caddyfile
+
+~~~
+{$V2RAY_DOMAIN}
+{
+  log ./caddy.log
+  proxy {$V2RAY_PATH} localhost:10550 {
+    websocket
+    header_upstream -Origin
+  }
+  gzip
+  tls {$V2RAY_EMAIL} {
+    protocols tls1.0 tls1.2
+    # remove comment if u want to use cloudflare ddns
+    # dns cloudflare
+  }
+}
+~~~
+
+创建 docker-compose.yml 并修改对应项
+
+~~~
+version: '1'
+
+services:
+ v2ray:
+    image: rico93/v2ray_v3:api_alpine
+    restart: always
+    network_mode: "host"
+    environment:
+      sspanel_url: "https://xxxx"
+      key: "xxxx"
+      docker: "true"
+      speedtest: "false"
+      node_id: 10
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+ caddy:
+    image: jessestuart/caddy-cloudflare:v0.11.0
+    restart: always
+    environment:
+      - ACME_AGREE=true
+#      if u want to use cloudflare ddns service
+#      - CLOUDFLARE_EMAIL=xxxxxx@out.look.com
+#      - CLOUDFLARE_API_KEY=xxxxxxx
+      - V2RAY_DOMAIN=xxxx.com
+      - V2RAY_PATH=/v2ray
+      - V2RAY_EMAIL=xxxx@outlook.com
+    network_mode: "host"
+    volumes:
+      - ./.caddy:/root/.caddy
+      - ./Caddyfile:/etc/Caddyfile
+~~~
+
+运行
+
+~~~
+docker-compose up (加上 -d 后台运行）
+~~~
+
+#### 版本二 单纯一个V2ray
+
+创建 docker-compose.yml 并修改对应项
+
+~~~
+version: '1'
+
+services:
+ v2ray:
+    image: rico93/v2ray_v3:api_alpine
+    restart: always
+    network_mode: "host"
+    environment:
+      sspanel_url: "https://xxxx"
+      key: "xxxx"
+      docker: "true"
+      speedtest: "false"
+      node_id: 10
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+~~~
+
+运行
+
+~~~
+docker-compose up (加上 -d 后台运行）
 ~~~
 
 ### Pull the image （目前ubuntu（500M）和alpine（200M））
