@@ -4,7 +4,7 @@ import sys
 sys.path.append(os.path.dirname(__file__))
 import logging
 from grpc._channel import _Rendezvous
-from errors import *
+from Munager.V2Manager.errors import *
 from v2ray.com.core.common.net import port_pb2, address_pb2
 from v2ray.com.core import config_pb2 as core_config_pb2
 from v2ray.com.core.proxy.vmess import account_pb2

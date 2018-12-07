@@ -1,6 +1,6 @@
 import time
 from Munager.V2Manager.client import *
-from errors import *
+from Munager.V2Manager.errors import *
 import uuid
 import os
 
