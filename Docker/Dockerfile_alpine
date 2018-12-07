@@ -18,33 +18,22 @@ COPY --from=builder /usr/bin/v2ray/v2ctl /usr/bin/v2ray/
 COPY --from=builder /usr/bin/v2ray/geoip.dat /usr/bin/v2ray/
 COPY --from=builder /usr/bin/v2ray/geosite.dat /usr/bin/v2ray/
 
-RUN runDeps="git"\
-	&& set -ex  \
-    && apk --no-cache add ca-certificates  \
-	&& apk add  --no-cache --update \
-        build-base \
-        linux-headers \
-        py3-cffi \
-        py3-cryptography \
-        libffi-dev \
-        bash \
-        vim \
-        curl \
-        ca-certificates \
-    && update-ca-certificates \
+RUN runDeps="git build-base linux-headers py3-cffi libffi-dev"\
+    && set -ex  \
+    && apk add --no-cache ca-certificates \
+    && apk add --no-cache --virtual .build-deps ${runDeps} \
     && mkdir /var/log/v2ray/ \
     && mkdir /etc/v2ray \
     && chmod +x /usr/bin/v2ray/v2ctl  \
     && chmod +x /usr/bin/v2ray/v2ray \
-    && apk add --no-cache --virtual .build-deps ${runDeps} \
     && cd /etc/ \
-	&& git clone -b v2ray_api https://github.com/rico93/shadowsocks-munager.git \
+    && git clone -b v2ray_api https://github.com/rico93/shadowsocks-munager.git \
     && cd shadowsocks-munager \
     && cp config/config_example.yml config/config.yml \
     && cp config/config.json /etc/v2ray/config.json \
-    && pip3 install -r requirements.txt\
-    && pip3
-
+    && pip3 install --no-cache-dir -r requirements.txt\
+    && apk del .build-deps \
+    && apk add --no-cache libstdc++
 
 ENV PATH /usr/bin/v2ray:$PATH
 VOLUME /etc/v2ray/ /etc/shadowsocks-munager/ /var/log/v2ray/
