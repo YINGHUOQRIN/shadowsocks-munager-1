@@ -94,11 +94,11 @@ sudo sh get-docker.sh
 
 ### Pull the image （目前ubuntu和alpine的镜像大小都是500m左右）
 ~~~
-docker pull rico93/v2ray_v3:api_ubuntu
+docker pull rico93/v2ray_v3:api_alpine
 
-or docker pull rico93/v2ray_v3:api_alpine
+or docker pull rico93/v2ray_v3:api_ubuntu
 
-docker run -d --network=host --name v2ray_v3_api -e node_id=1 -e key=ixidnf -e sspanel_url=https://xx -e docker=true --log-opt max-size=50m --log-opt max-file=3 --restart=always rico93/v2ray_v3:api_ubuntu
+docker run -d --network=host --name v2ray_v3_api -e node_id=1 -e key=ixidnf -e sspanel_url=https://xx -e docker=true --log-opt max-size=50m --log-opt max-file=3 --restart=always rico93/v2ray_v3:api_alpine
 ~~~
 
 # 别的v2适配的项目
