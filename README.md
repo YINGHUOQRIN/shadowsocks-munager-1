@@ -3,7 +3,7 @@
 [ThunderingII](https://github.com/ThunderingII/v2ray_python_client) 和 [spencer404](https://github.com/spencer404/v2ray_api) 关于python 调用api 的项目和示例。
 
 ## 项目状态
-
+g
 目前适配的是[sspanel 魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim)的webapi，
 
 然后目前只适配了流量记录，服务器是否在线，在线人数，负载，speedtest后端测速，延迟，后端按照前端设定自动调用API增加用户。

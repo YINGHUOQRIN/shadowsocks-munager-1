@@ -1,16 +1,14 @@
-www.xxx.com
+{$V2RAY_DOMAIN}
 {
   log ./caddy.log
-  proxy /v2ray 127.0.0.1:10550 {
+  proxy {$V2RAY_PATH} localhost:10550 {
     websocket
     header_upstream -Origin
   }
-  proxy / https://www.bing.com {
-        transparent
-    }
   gzip
-  tls xxxxx@outlook.com {
+  tls {$V2RAY_EMAIL} {
     protocols tls1.0 tls1.2
-    dns cloudflare
+    # remove comment if u want to use cloudflare ddns
+    # dns cloudflare
   }
 }
