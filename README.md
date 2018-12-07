@@ -124,7 +124,7 @@ pip install -U docker-compose
 创建 docker-compose.yml 并修改对应项
 
 ~~~
-version: '1'
+version: '2'
 
 services:
  v2ray:
@@ -170,7 +170,7 @@ docker-compose up (加上 -d 后台运行）
 创建 docker-compose.yml 并修改对应项
 
 ~~~
-version: '1'
+version: '2'
 
 services:
  v2ray:
