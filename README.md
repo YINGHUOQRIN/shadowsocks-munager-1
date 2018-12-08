@@ -51,7 +51,7 @@ config文件没有tls设置。
 
 kcp支持所有v2ray的type：
 
-- none: 默认值，不进行伪装，发送的数据是没有特征的数据包。：xxxxx.com;443;16;kcp;;path=/v2ray|host=oxxxx.com|inside_port=10550
+- none: 默认值，不进行伪装，发送的数据是没有特征的数据包。：xxxxx.com;443;16;kcp;noop;path=/v2ray|host=oxxxx.com|inside_port=10550
 
 - srtp: 伪装成 SRTP 数据包，会被识别为视频通话数据（如 FaceTime）。：xxxxx.com;443;16;kcp;srtp;path=/v2ray|host=oxxxx.com|inside_port=10550
 
@@ -229,8 +229,49 @@ or docker pull rico93/v2ray_v3:api_ubuntu
 docker run -d --network=host --name v2ray_v3_api -e node_id=1 -e key=ixidnf -e sspanel_url=https://xx -e docker=true --log-opt max-size=50m --log-opt max-file=3 --restart=always rico93/v2ray_v3:api_alpine
 ~~~
 
+
+## 普通安装
+
+安装v2ray
+~~~
+bash <(curl -L -s https://install.direct/go.sh)
+~~~
+
+安装依赖：Ubuntu
+~~~
+apt-get install -y gcc python3-dev python3-pip python3-setuptools git
+~~~
+
+Centos
+
+~~~
+yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+yum update
+yum install -y git python36u python36u-libs python36u-devel python36u-pip gcc
+python3.6 -V
+~~~
+安装项目
+~~~
+git clone -b v2ray_api https://github.com/rico93/shadowsocks-munager.git
+cd shadowsocks-munager
+cp config/config_example.yml config/config.yml
+cp config/config.json /etc/v2ray/config.json
+pip3 install -r requirements.txt or pip3.6 install -r requirements.txt
+~~~
+
+修改config.yml配置， docker: False, node_id 等
+
+运行
+~~~
+screen -S v2ray
+python3 run.py --config-file=config/config.yml or python3.6 run.py --config-file=config/config.yml
+~~~
+
+
 # 别的v2适配的项目
 
 [ssrpanel](https://github.com/ssrpanel/SSRPanel),目前自带了一个v2ray的后端支持。
 
 [sspanel 魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim) wiki中有提及一个收费版的v2ray适配。
+
+
