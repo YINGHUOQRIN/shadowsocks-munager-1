@@ -107,6 +107,7 @@ pip install -U docker-compose
 ~~~
 {$V2RAY_DOMAIN}
 {
+  root /srv/www
   log ./caddy.log
   proxy {$V2RAY_PATH} localhost:10550 {
     websocket
