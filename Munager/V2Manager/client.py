@@ -131,6 +131,7 @@ class Kcp(StreamSetting):
         """
         :param users: 包含'email','level','user_id','alter_id'字段的字典
         """
+        header = KCP_HEADERS_CONFIG['noop']
         if header_key in KCP_HEADERS_CONFIG:
             header = KCP_HEADERS_CONFIG[header_key]
         super(Kcp, self).__init__()
