@@ -10,7 +10,7 @@ green='\033[0;32m'
 yellow='\033[0;33m'
 plain='\033[0m'
 software=(Docker_Caddy Docker_Caddy_cloudflare Docker)
-operation=(install update_config)
+operation=(install update_config update_image logs)
 # Make sure only root can run our script
 [[ $EUID -ne 0 ]] && echo -e "[${red}Error${plain}] This script must be run as root!" && exit 1
 
@@ -345,8 +345,24 @@ install_dependencies(){
         done
     fi
 }
+#update_image
+update_image_v2ray(){
+    echo "Shut down the current service"
+    docker-compose down
+    echo "Pulling Images"
+    docker-compose pull
+    echo "Start Service"
+    docker-compose up -d
+}
 
-# Install cleanup
+#show last 100 line log
+
+logs_v2ray(){
+    echo "Last 100 line logs"
+    docker-compose logs --tail 100
+}
+
+# Update config
 update_config_v2ray(){
     cd ${cur_dir}
     echo "Shut down the current service"
