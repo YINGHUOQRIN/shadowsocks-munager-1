@@ -85,7 +85,12 @@ sed -i 's#/usr/bin/gcc-4.9#/usr/bin/gcc#g' '/root/tcp.sh'
 chmod +x tcp.sh && ./tcp.sh
 ~~~
 
+### 脚本安装
 
+~~~
+curl https://raw.githubusercontent.com/rico93/shadowsocks-munager/v2ray_api/install.sh -o install.sh
+bash install.sh
+~~~
 ### 安装Docker
 
 ~~~
