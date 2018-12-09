@@ -4,7 +4,7 @@
 [ThunderingII](https://github.com/ThunderingII/v2ray_python_client) 和 [spencer404](https://github.com/spencer404/v2ray_api) 关于python 调用api 的项目和示例。
 
 ## 项目状态
-g
+
 目前适配的是[sspanel 魔改版](https://github.com/NimaQu/ss-panel-v3-mod_Uim)的webapi，
 
 然后目前只适配了流量记录，服务器是否在线，在线人数，负载，speedtest后端测速，延迟，后端按照前端设定自动调用API增加用户。
@@ -49,9 +49,7 @@ xxxxx.com;443;16;tls;ws;path=/v2ray|host=oxxxx.com|inside_port=10550
 
 如果外部端口设定不是443，监听0.0.0.0:外部设定端口，所有用户的单端口，此时inside_port弃用。
 
-默认自己会找caddy或者nginx反向代理. 只做了ws+tls（tls走反向代理），所以生成的
-
-config文件没有tls设置。
+默认使用caddy 镜像来提供tls。 控制代码不会生成tls相关的配置。
 
 kcp支持所有v2ray的type：
 
