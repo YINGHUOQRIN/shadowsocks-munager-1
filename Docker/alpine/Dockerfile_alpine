@@ -1,5 +1,8 @@
 FROM ubuntu:latest as builder
 
+LABEL maintainer="Rico <rico93@outlook.com>"
+LABEL V2Ray = "4.8.0"
+
 RUN apt-get update
 RUN apt-get install curl -y
 RUN curl -L -o /tmp/go.sh https://install.direct/go.sh
@@ -10,8 +13,6 @@ FROM python:3.6.7-alpine
 # http://bugs.python.org/issue19846
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
 ENV LANG C.UTF-8
-LABEL maintainer="Rico <rico93@outlook.com>"
-LABEL V2Ray = "4.7.0"
 
 COPY --from=builder /usr/bin/v2ray/v2ray /usr/bin/v2ray/
 COPY --from=builder /usr/bin/v2ray/v2ctl /usr/bin/v2ray/

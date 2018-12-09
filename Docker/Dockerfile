@@ -1,13 +1,14 @@
 FROM ubuntu:latest as builder
 
+LABEL maintainer="Rico <rico93@outlook.com>"
+LABEL V2Ray = "4.7.0"
+
 RUN apt-get update
 RUN apt-get install curl -y
 RUN curl -L -o /tmp/go.sh https://install.direct/go.sh
 RUN chmod +x /tmp/go.sh
 RUN /tmp/go.sh
 
-LABEL maintainer="Rico <rico93@outlook.com>"
-LABEL V2Ray = "4.7.0"
 
 RUN runDeps="gcc python3-dev python3-pip python3-setuptools git"\
 	&& set -ex  \
