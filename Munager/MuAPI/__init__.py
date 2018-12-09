@@ -158,6 +158,8 @@ class MuAPI:
         data = json.loads(r.text)['data']
         temp_server = data['server'].split(";")
         server = dict(zip(["server_address", 'port', 'AlterId', 'protocol', 'protocol_param'], temp_server[:5]))
+        if server['protocol'] == "tls":
+            server['protocol'],server['protocol_param'] = server['protocol_param'] ,server['protocol']
         temp_extraArgs = []
         if len(temp_server)==6:
             temp_extraArgs = temp_server[5].split("|")
