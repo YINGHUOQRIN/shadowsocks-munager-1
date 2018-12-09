@@ -95,6 +95,16 @@ chmod +x tcp.sh && ./tcp.sh
 curl https://raw.githubusercontent.com/rico93/shadowsocks-munager/v2ray_api/install.sh -o install.sh
 bash install.sh
 ~~~
+
+####脚本说明
+
+务必将脚本和生成的Caddyfile，docker-compose.yml 文件放在同一目录下。 并在该目录下运行脚本
+
+- [x] 脚本适配后端，并安装docker，docker-compose，启动服务
+- [x] 查看日志
+- [x] 更新config
+- [x] 更新images
+
 ### 安装Docker
 
 ~~~
