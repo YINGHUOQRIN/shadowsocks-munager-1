@@ -36,10 +36,14 @@ EOF occurred in violation of protocol (_ssl.c:833)， 看起来像是https验证
 ## V2ray 支持kcp，ws, tls 由镜像Caddy提供
 
 这里面板设置是节点类型v2ray, 普通端口
-目前懒得改面板，只能baypss
 
-没有cdn的域名或者ip;端口（外部链接的);AlterId;ws;;额外参数(path=/v2ray|host=xxxx.win|inside_port=10550|tls=tls(这个端口内部监听))
-xxxxx.com;443;16;ws;;path=/v2ray|host=oxxxx.com|port=10550|tls=tls (这个参数是为了让前端识别有tls这个选择，ws设定下用吧）
+[面板设置说明 主要是这个](https://github.com/NimaQu/ss-panel-v3-mod_Uim/wiki/v2ray-%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B)
+
+没有cdn的域名或者ip;端口（外部链接的);AlterId;ws;;额外参数(path=/v2ray|host=xxxx.win|inside_port=10550这个端口内部监听))
+
+xxxxx.com;443;16;ws;;path=/v2ray|host=oxxxx.com|inside_port=10550
+
+xxxxx.com;443;16;tls;ws;path=/v2ray|host=oxxxx.com|inside_port=10550
 
 目前逻辑是如果为外部链接的端口是443，则默认监听本地127.0.0.1:inside_port，对外暴露443 (如果想用kcp，走443端口，建议设置流量转发)
 
