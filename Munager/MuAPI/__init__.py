@@ -166,8 +166,9 @@ class MuAPI:
             temp_extraArgs = temp_server[5].split("|")
         extraArgs = {}
         for i in temp_extraArgs:
-            key, value = i.split("=")
-            extraArgs[key] = value
+            if i:
+                key, value = i.split("=")
+                extraArgs[key] = value
         server['extraArgs'] = extraArgs
         data['server'] = server
         self.node_info = data
