@@ -19,6 +19,7 @@ COPY --from=builder /usr/bin/v2ray/v2ctl /usr/bin/v2ray/
 COPY --from=builder /usr/bin/v2ray/geoip.dat /usr/bin/v2ray/
 COPY --from=builder /usr/bin/v2ray/geosite.dat /usr/bin/v2ray/
 
+LABEL v2ray_api_version="0.0.1"
 RUN runDeps="git build-base linux-headers py3-cffi libffi-dev"\
     && set -ex  \
     && apk add --no-cache ca-certificates \
