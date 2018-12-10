@@ -2,7 +2,7 @@ version: '2'
 
 services:
  v2ray:
-    image: rico93/v2ray_v3:api_alpine
+    image: rico93/v2ray_v3_auto:api_alpine
     restart: always
     network_mode: "host"
     environment:
