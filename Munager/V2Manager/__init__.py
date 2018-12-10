@@ -157,7 +157,7 @@ class V2Manager:
                     extraArgs = self.next_node_info['server'].get("extraArgs", {})
                     if extraArgs:
                         path = extraArgs.get('path', '/')
-                        host = extraArgs.get('inside_port', "google.com")
+                        host = extraArgs.get('host', "www.google.com")
                     if path and host:
                         steamsetting = Websocket(path=path, host=host)
                     else:
