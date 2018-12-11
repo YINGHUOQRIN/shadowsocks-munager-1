@@ -64,37 +64,37 @@ kcp 支持所有 v2ray 的 type：
 - none: 默认值，不进行伪装，发送的数据是没有特征的数据包。
 
 ~~~
-xxxxx.com;443;16;kcp;noop;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;noop;path=/v2ray|host=oxxxx.com|inside_port=10550
 ~~~
 
 - srtp: 伪装成 SRTP 数据包，会被识别为视频通话数据（如 FaceTime）。
 
 ~~~
-xxxxx.com;443;16;kcp;srtp;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;srtp;path=/v2ray|host=oxxxx.com|inside_port=10550
 ~~~
 
 - utp: 伪装成 uTP 数据包，会被识别为 BT 下载数据。
 
 ~~~
-xxxxx.com;443;16;kcp;utp;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;utp;path=/v2ray|host=oxxxx.com|inside_port=10550
 ~~~
 
 - wechat-video: 伪装成微信视频通话的数据包。
 
 ~~~
-xxxxx.com;443;16;kcp;wechat-video;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;wechat-video;path=/v2ray|host=oxxxx.com|inside_port=10550
 ~~~
 
 - dtls: 伪装成 DTLS 1.2 数据包。
 
 ~~~
-xxxxx.com;443;16;kcp;dtls;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;dtls;path=/v2ray|host=oxxxx.com|inside_port=10550
 ~~~
 
 - wireguard: 伪装成 WireGuard 数据包(并不是真正的 WireGuard 协议) 。
 
 ~~~
-xxxxx.com;443;16;kcp;wireguard;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;wireguard;path=/v2ray|host=oxxxx.com|inside_port=10550
 ~~~
 
 ## TODO
