@@ -159,10 +159,10 @@ class Munager:
             callback=self.upload_throughput,
             callback_time=self._second_to_msecond(self.config.get('upload_throughput_period', 360)),
         ).start()
-        # PeriodicCallback(
-        #     callback=self.upload_serverload,
-        #     callback_time=self._second_to_msecond(self.config.get("upload_serverload_period", 60)),
-        # ).start()
+        PeriodicCallback(
+            callback=self.upload_serverload,
+            callback_time=self._second_to_msecond(self.config.get("upload_serverload_period", 60)),
+        ).start()
         if self.config.get("speedtest",False):
             PeriodicCallback(
                 callback_time=self._second_to_msecond(self.config.get("upload_speedtest_period",21600)),
