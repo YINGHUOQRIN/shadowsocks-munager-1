@@ -7,7 +7,7 @@
 
 ## 项目状态
 
-支持 [ss-panel-v3-mod_Uim](https://github.com/NimaQu/ss-panel-v3-mod_Uim) 的 webapi。
+支持 [ss-panel-v3-mod_Uim](https://github.com/NimaQu/ss-panel-v3-mod_Uim) 的 webapi。 目前自己也尝试维护了一个版本, [panel](https://github.com/rico93/ss-panel-v3-mod_Uim)
 
 目前只适配了流量记录、服务器是否在线、在线人数、负载、Speedtest 后端测速、延迟、后端根据前端的设定自动调用 API 增加用户。
 
