@@ -7,7 +7,7 @@
 
 ## 项目状态
 
-支持 [ss-panel-v3-mod_Uim](https://github.com/NimaQu/ss-panel-v3-mod_Uim) 的 webapi。
+支持 [ss-panel-v3-mod_Uim](https://github.com/NimaQu/ss-panel-v3-mod_Uim) 的 webapi。 目前自己也尝试维护了一个版本, [panel](https://github.com/rico93/ss-panel-v3-mod_Uim)
 
 目前只适配了流量记录、服务器是否在线、在线人数、负载、Speedtest 后端测速、延迟、后端根据前端的设定自动调用 API 增加用户。
 
@@ -17,9 +17,8 @@ v2ray 后端 kcp、tcp、ws 都是多用户共用一个端口。
 
 ## 已知 Bug
 
-面板后台修改节点类型，如 (v2ray to ss or ss to v2ray) 会出现 **EOF occurred in violation of protocol (_ssl.c:833)**，看起来像是 https 验证失败，暂时不知道啥问题造成的，但是整体正常。
-
-偶然有几率会出现面板服务器下线 (但能够正常使用），看 log 发现卡在测速（目前默认不测速），可以直接重启脚本就好了。
+1. 偶然有几率会出现面板服务器下线 (但能够正常使用），看 log 发现卡在测速（目前默认不测速），可以直接重启脚本就好了。
+2. 目前docker化后，服务器意外重启，服务看log主要v2服务成功添加，但不会跟面板提交负载，在线人数信息，bug。 周末研究一下。 需要手动重启
 
 ## 作为 ss 后端
 
@@ -64,37 +63,37 @@ kcp 支持所有 v2ray 的 type：
 - none: 默认值，不进行伪装，发送的数据是没有特征的数据包。
 
 ~~~
-xxxxx.com;443;16;kcp;noop;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;noop;
 ~~~
 
 - srtp: 伪装成 SRTP 数据包，会被识别为视频通话数据（如 FaceTime）。
 
 ~~~
-xxxxx.com;443;16;kcp;srtp;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;srtp;
 ~~~
 
 - utp: 伪装成 uTP 数据包，会被识别为 BT 下载数据。
 
 ~~~
-xxxxx.com;443;16;kcp;utp;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;utp;
 ~~~
 
 - wechat-video: 伪装成微信视频通话的数据包。
 
 ~~~
-xxxxx.com;443;16;kcp;wechat-video;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;wechat-video;
 ~~~
 
 - dtls: 伪装成 DTLS 1.2 数据包。
 
 ~~~
-xxxxx.com;443;16;kcp;dtls;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;dtls;
 ~~~
 
 - wireguard: 伪装成 WireGuard 数据包(并不是真正的 WireGuard 协议) 。
 
 ~~~
-xxxxx.com;443;16;kcp;wireguard;path=/v2ray|host=oxxxx.com|inside_port=10550
+xxxxx.com;xxx换成除了443之外的端口;16;kcp;wireguard;
 ~~~
 
 ## TODO
