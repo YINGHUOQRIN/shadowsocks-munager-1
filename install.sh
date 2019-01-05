@@ -430,7 +430,7 @@ done
 read -p "Please enter a number (Default ${operation[0]}):" selected
 [ -z "${selected}" ] && selected="1"
 case "${selected}" in
-    1|2)
+    1|2|3|4)
     echo
     echo "You choose = ${operation[${selected}-1]}"
     echo
