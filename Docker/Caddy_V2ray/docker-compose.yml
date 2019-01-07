@@ -2,7 +2,7 @@ version: '2'
 
 services:
  v2ray:
-    image: rico93/v2ray_v3:api_alpine
+    image: alliswell2day/v2:ss_panel
     restart: always
     network_mode: "host"
     environment:
